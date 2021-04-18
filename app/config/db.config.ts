@@ -2,7 +2,7 @@ import {Sequelize, SequelizeOptions} from 'sequelize-typescript'
 
 const sequelizeOptions: SequelizeOptions = {
     host: 'agwallet-postgres',
-    port: 5432,
+    port: 5436,
     username: 'agwallet',
     password: 'password',
     database: 'agwalletdb',

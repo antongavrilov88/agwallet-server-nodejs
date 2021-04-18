@@ -1,0 +1,62 @@
+{
+    "extends": [
+        "airbnb-typescript"
+    ],
+    "parserOptions": {
+        "project": "./tsconfig.eslint.json"
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "env": {
+        "browser": true,
+        "node": true,
+        "jasmine": true
+    },
+    "rules": {
+        "no-tabs": 2,
+        "no-restricted-syntax": [
+            "error",
+            {
+                "selector": "ExportDefaultDeclaration",
+                "message": "Prefer named exports"
+            }
+        ],
+        "import/prefer-default-export": 0,
+        "@typescript-eslint/semi": 0,
+        "indent": "off",
+        "@typescript-eslint/indent": [
+            "error",
+            4
+        ],
+        "block-spacing" : [
+            "error",
+            "never"
+        ],
+        "object-curly-spacing": "off",
+        "@typescript-eslint/object-curly-spacing": [
+            "error",
+            "never"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "no-plusplus": "off",
+        "no-underscore-dangle": "off",
+        "arrow-parens": "off",
+        "@typescript-eslint/lines-between-class-members": "off",
+        "@typescript-eslint/comma-dangle": [
+            "error",
+            "never"
+        ]
+    },
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        }
+      }
+    }
+}

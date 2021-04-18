@@ -1,7 +1,9 @@
 import {create, getAll, getOne} from '../controllers/user.controller'
 
-const userRoutes = (app: any) => {
-    const router = require('express').Router()
+const router = require('express')
+
+export const userRoutes = (app: any) => {
+    router.Router()
 
     router.post('/', create);
 
@@ -10,6 +12,4 @@ const userRoutes = (app: any) => {
     router.get('/:id', getOne)
 
     app.use('/api/users', router)
-};
-
-export default userRoutes
+}

@@ -1,5 +1,5 @@
 import {db} from './models/index'
-import userRoutes from './routes/user.routes'
+import {userRoutes} from './routes/user.routes'
 
 const express = require('express')
 const bodyParser = require('body-parser')
