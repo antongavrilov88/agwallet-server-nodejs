@@ -1,5 +1,4 @@
-import { app } from '../app'
-import {sum} from './dummy'
+const sum = (a: number, b: number) => a + b
 
 test('Dummy unit test', () => {
     const actual = sum(1, 2)

@@ -1,0 +1,60 @@
+import {db} from '../models/index'
+import {apiVersion} from './config'
+import {DefaultObject, ErrorData, Error} from './types'
+
+const Token = db.tokens
+
+const makeErrorObject = (code: string, title: string) => ({
+    code,
+    title
+})
+
+// const enum APIError {
+//     WRONG_API = 1,
+//     AUTH_CONFLICT = 2,
+//     INTERNAL_ERROR = 3,
+//     UNAUTHORIZED = 4,
+//     NOT_FOUND = 5,
+//     FORBIDDEN = 6
+// }
+
+export const errors: Record<any, Error> = {
+    WRONG_API: makeErrorObject('WrongAPI', 'Wrong API'),
+    AUTH_CONFLICT: makeErrorObject('UserAlreadyInSystem', 'User already in system'),
+    INTERNAL_ERROR: makeErrorObject('InternalError', 'Something went wrong'),
+    UNAUTHORIZED: makeErrorObject('Unauthorized', 'Unauthorized'),
+    NOT_FOUND: makeErrorObject('NotFound', 'Not found'),
+    FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied')
+}
+
+export const defaultResponseObject = () => ({
+    jsonapi: {
+        version: apiVersion
+    },
+    meta: {
+        copyright: 'AGwallet server',
+        authors: [
+            'Anton Gavrilov'
+        ]
+    }
+})
+
+export const errorResponseObject = (error: Error) => {
+    const responseObject: DefaultObject<ErrorData> = defaultResponseObject()
+    responseObject.errors = [{
+        code: error.code,
+        title: error.title
+    }]
+    return responseObject
+}
+
+export const createBadResponse = (error: Error) => errorResponseObject(error)
+
+export const checkUserStatus = async (token: any) => {
+    const status = Token.findOne({where: {token}})
+        .then((data: any) => (data !== null ? data.id : false))
+        .catch((err: {message: any}) => {
+            console.log(err)
+        })
+    return await status
+}

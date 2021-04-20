@@ -7,7 +7,7 @@ services:
         depends_on:
             - agwallet-postgres
         environment:
-            DATABASE_URL: postgres://agwallet:password@postgres:5432/agwalletdb
+            DATABASE_URL: postgres://agwallet:password@postgres:5437/agwalletdb
             NODE_ENV: development
             PORT: 8000
         ports:

@@ -1,18 +1,19 @@
 import Validator from 'validatorjs'
-import {checkUserStatus, ErrorName, createBadResponse} from './utils/helpers'
-import {db} from '../models/index'
-import {userDataRules} from './utils/requestDataVaidators'
+import {checkUserStatus, errors, createBadResponse} from '../helpers'
+import {db} from '../../models/index'
+import {userDataRules} from './requestDataRules'
 
 const User = db.users
 const Token = db.tokens
 
 export const create = async (req: any, res: any) => {
     try {
-        const status = await checkUserStatus(req.headers.authorization)
+        // const status = await checkUserStatus(req.headers.authorization)
 
+        const status = false
         if (status) {
             res.status(409).send(
-                createBadResponse(ErrorName.AUTH_CONFLICT)
+                createBadResponse(errors.AUTH_CONFLICT)
             )
             return
         }
@@ -20,7 +21,7 @@ export const create = async (req: any, res: any) => {
 
         if (validation.fails()) {
             res.status(400).send(
-                createBadResponse(ErrorName.WRONG_API)
+                createBadResponse(errors.WRONG_API)
             )
             return
         }
@@ -33,7 +34,7 @@ export const create = async (req: any, res: any) => {
 
         if (!newUser) {
             res.status(500).send(
-                createBadResponse(ErrorName.INTERNAL_ERROR)
+                createBadResponse(errors.INTERNAL_ERROR)
             )
             return
         }
@@ -47,7 +48,7 @@ export const create = async (req: any, res: any) => {
 
         if (!newToken) {
             res.status(500).send(
-                createBadResponse(ErrorName.INTERNAL_ERROR)
+                createBadResponse(errors.INTERNAL_ERROR)
             )
             return
         }
@@ -55,7 +56,7 @@ export const create = async (req: any, res: any) => {
         res.status(201).send(newUser)
     } catch (err) {
         res.status(500).send(
-            createBadResponse(ErrorName.INTERNAL_ERROR)
+            createBadResponse(errors.INTERNAL_ERROR)
         )
     }
 }
@@ -66,7 +67,7 @@ export const getAll = async (req: any, res: any) => {
 
         if (!status) {
             res.status(401).send(
-                createBadResponse(ErrorName.UNAUTHORIZED)
+                createBadResponse(errors.UNAUTHORIZED)
             )
             return
         }
@@ -75,7 +76,7 @@ export const getAll = async (req: any, res: any) => {
 
         if (!users) {
             res.status(500).send(
-                createBadResponse(ErrorName.INTERNAL_ERROR)
+                createBadResponse(errors.INTERNAL_ERROR)
             )
             return
         }
@@ -83,7 +84,7 @@ export const getAll = async (req: any, res: any) => {
         res.status(200).send(users)
     } catch (err) {
         res.status(500).send(
-            createBadResponse(ErrorName.INTERNAL_ERROR)
+            createBadResponse(errors.INTERNAL_ERROR)
         )
     }
 }
@@ -94,7 +95,7 @@ export const getOne = async (req: any, res: any) => {
 
         if (!status) {
             res.status(401).send(
-                createBadResponse(ErrorName.UNAUTHORIZED)
+                createBadResponse(errors.UNAUTHORIZED)
             )
             return
         }
@@ -105,14 +106,14 @@ export const getOne = async (req: any, res: any) => {
 
         if (!user) {
             res.status(500).send(
-                createBadResponse(ErrorName.INTERNAL_ERROR)
+                createBadResponse(errors.INTERNAL_ERROR)
             )
             return
         }
         res.status(200).send(user)
     } catch (err) {
         res.status(500).send(
-            createBadResponse(ErrorName.INTERNAL_ERROR)
+            createBadResponse(errors.INTERNAL_ERROR)
         )
     }
 }

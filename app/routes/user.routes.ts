@@ -1,11 +1,10 @@
-import {create, getAll, getOne} from '../controllers/user.controller'
-
-const router = require('express')
+import {create, getAll, getOne} from '../controllers/user/user.controller'
 
 export const userRoutes = (app: any) => {
-    router.Router()
+    // eslint-disable-next-line global-require
+    const router = require('express').Router()
 
-    router.post('/', create);
+    router.post('/', create)
 
     router.get('/', getAll)
 
