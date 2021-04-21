@@ -34,4 +34,7 @@
     "include": [
         "app"
     ]
+    // "exclude": [
+    //     "app/**/*.test.ts"
+    // ]
 }
