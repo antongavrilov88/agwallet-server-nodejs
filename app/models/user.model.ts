@@ -1,14 +1,18 @@
 export const userModel = (sequelize: any, Sequelize: any) => {
     const User = sequelize.define('users', {
-        displayName: {
+        email: {
             type: Sequelize.STRING,
-            allowNull: true
+            allowNull: false
         },
-        avatar: {
+        password: {
             type: Sequelize.STRING,
-            allowNull: true
+            allowNull: false
+        },
+        admin: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
         }
     })
 
     return User
-};
+}
