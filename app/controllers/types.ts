@@ -16,3 +16,5 @@ export type Error = {
 }
 
 export type ErrorData = Error[]
+
+export type ResponseData = any
