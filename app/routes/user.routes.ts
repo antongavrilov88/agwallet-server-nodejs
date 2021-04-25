@@ -1,14 +1,15 @@
 import {create, getAll, getOne} from '../controllers/user/user.controller'
+import {UserRoutes} from './constans'
 
 export const userRoutes = (app: any) => {
     // eslint-disable-next-line global-require
     const router = require('express').Router()
 
-    router.post('/', create)
+    router.post(UserRoutes.root, create)
 
-    router.get('/', getAll)
+    router.get(UserRoutes.root, getAll)
 
-    router.get('/:id', getOne)
+    router.get(UserRoutes.userId, getOne)
 
-    app.use('/api/users', router)
+    app.use(UserRoutes.baseUserRoute, router)
 }
