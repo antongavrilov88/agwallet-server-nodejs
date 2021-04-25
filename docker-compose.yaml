@@ -31,6 +31,21 @@ services:
             POSTGRES_DB: agwalletdb
         networks:
             [awesome]
+    agwallet-postgres-test:
+        hostname: agwallet-postgres-test
+        container_name: agwallet-postgres-test
+        image: postgres:9.6.5-alpine
+        ports:
+            ['5438:5432']
+        volumes:
+            - ./postgres-initdb.sh:/docker-entrypoint-initdb.d/init.sh
+        restart: always
+        environment:
+            POSTGRES_USER: agwallet
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: agwalletdb
+        networks:
+            [awesome]
 
     agwallet-pgadmin:
             container_name: agwallet-pgadmin
