@@ -3,7 +3,8 @@ export const userDataRules = {
         authorization: 'required'
     },
     body: {
-        displayName: 'required',
-        avatar: 'required'
+        email: 'required',
+        password: 'required',
+        admin: 'required'
     }
 }

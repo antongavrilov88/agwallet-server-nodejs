@@ -4,7 +4,7 @@ import {db} from '../../models/index'
 import {userDataRules} from './requestDataRules'
 
 const User = db.users
-const Token = db.tokens
+// const Token = db.tokens
 
 export const create = async (req: any, res: any) => {
     try {
@@ -19,16 +19,17 @@ export const create = async (req: any, res: any) => {
         }
         const validation = new Validator(req, userDataRules)
 
-        if (validation.fails()) {
-            res.status(400).send(
+        if (!validation.fails()) {
+            res.status(405).send(
                 createBadResponse(errors.WRONG_API)
             )
             return
         }
 
         const user = {
-            displayName: req.body.displayName,
-            avatar: req.body.avatar
+            email: req.body.email,
+            password: req.body.password,
+            admin: req.body.admin
         }
         const newUser = await User.create(user)
 
@@ -39,22 +40,23 @@ export const create = async (req: any, res: any) => {
             return
         }
 
-        const token = {
-            userId: newUser.id,
-            token: req.headers.authorization
-        }
+// TODO add headers to jest tests
+        // const token = {
+        //     userId: newUser.id,
+        //     token: req.headers.authorization
+        // }
+        // const newToken = await Token.create(token)
 
-        const newToken = await Token.create(token)
-
-        if (!newToken) {
-            res.status(500).send(
-                createBadResponse(errors.INTERNAL_ERROR)
-            )
-            return
-        }
+        // if (!newToken) {
+        //     res.status(500).send(
+        //         createBadResponse(errors.INTERNAL_ERROR)
+        //     )
+        //     return
+        // }
 
         res.status(201).send(newUser)
     } catch (err) {
+        console.log(err)
         res.status(500).send(
             createBadResponse(errors.INTERNAL_ERROR)
         )

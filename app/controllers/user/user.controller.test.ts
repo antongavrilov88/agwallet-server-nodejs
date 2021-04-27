@@ -4,18 +4,21 @@ import {UserRoutes} from '../../routes/constans'
 
 const request = require('supertest')
 
+const user = {
+    email: 'required',
+    password: 'required',
+    admin: true
+}
+// const headers = {
+//     authorisation: 'fhgshg'
+// }
+
 describe('my api test', () => {
-    it('Post /users/', async () => {
+    it('Create user', async () => {
         await db.sequelize.sync({force: true})
-        const {status} = await request(app).post(UserRoutes.baseUserRoute + UserRoutes.root, {
-            headers: {
-                authorization: 'required'
-            },
-            body: {
-                displayName: 'required',
-                avatar: 'required'
-            }
-        })
-        expect(status).toEqual(400)
+        const {status} = await request(app)
+            .post(UserRoutes.baseUserRoute + UserRoutes.root)
+            .send(user)
+        expect(status).toEqual(201)
     })
 })
