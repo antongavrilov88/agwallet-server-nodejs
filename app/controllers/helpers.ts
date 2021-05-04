@@ -18,7 +18,8 @@ export const errors: Record<any, Error> = {
     UNAUTHORIZED: makeErrorObject('Unauthorized', 'Unauthorized'),
     NOT_FOUND: makeErrorObject('NotFound', 'Not found'),
     FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
-    TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided')
+    TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
+    USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found')
 }
 
 export const defaultResponseObject = () => ({
@@ -62,8 +63,8 @@ export const checkUserStatus = async (token: any) => {
 }
 
 export class Auth {
-    constructor(header: string) {
-        let token = null
+    static async status(header: string) {
+        let token: string | null = null
         if (header) {
             const authorization = header.split(' ')
             if (authorization.length !== 2) {
@@ -71,13 +72,15 @@ export class Auth {
             }
             // eslint-disable-next-line prefer-destructuring
             token = authorization[1]
-        } else {
-            token = ''
-        }
-        if (token) {
-            if (!Token) {
-                return false
+            const id = async () => {
+                const status = Token.findOne({where: {token}})
+                    .then((data: any) => (data !== null ? data.id : false))
+                    .catch((err: {message: any}) => {
+                        console.log(err)
+                    })
+                return await status
             }
+            return await id()
         }
     }
 }

@@ -21,8 +21,8 @@ db.sequelize.sync({force: true}).then(() => {
 })
 
 app.get('/', (req: any, res: any) => {
-    console.log(req)
     res.json({message: 'Welcome to sample api-server'})
+    console.log(req)
 })
 
 userRoutes(app)
