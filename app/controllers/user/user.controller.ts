@@ -10,13 +10,13 @@ export const create = async (req: any, res: any) => {
     try {
         // const status = await checkUserStatus(req.headers.authorization)
 
-        const status = false
-        if (status) {
-            res.status(409).send(
-                createBadResponse(errors.AUTH_CONFLICT)
-            )
-            return
-        }
+        // const status = false
+        // if (status) {
+        //     res.status(409).send(
+        //         createBadResponse(errors.AUTH_CONFLICT)
+        //     )
+        //     return
+        // }
         const validation = new Validator(req, userDataRules)
 
         if (!validation.fails()) {
@@ -40,7 +40,7 @@ export const create = async (req: any, res: any) => {
             return
         }
 
-// TODO add headers to jest tests
+        // TODO add headers to jest tests
         // const token = {
         //     userId: newUser.id,
         //     token: req.headers.authorization
