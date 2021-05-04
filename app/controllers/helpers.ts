@@ -17,7 +17,8 @@ export const errors: Record<any, Error> = {
     INTERNAL_ERROR: makeErrorObject('InternalError', 'Something went wrong'),
     UNAUTHORIZED: makeErrorObject('Unauthorized', 'Unauthorized'),
     NOT_FOUND: makeErrorObject('NotFound', 'Not found'),
-    FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied')
+    FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
+    TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided')
 }
 
 export const defaultResponseObject = () => ({
@@ -58,4 +59,25 @@ export const checkUserStatus = async (token: any) => {
             console.log(err)
         })
     return await status
+}
+
+export class Auth {
+    constructor(header: string) {
+        let token = null
+        if (header) {
+            const authorization = header.split(' ')
+            if (authorization.length !== 2) {
+                return errors.TOKEN_NOT_PROVIDED
+            }
+            // eslint-disable-next-line prefer-destructuring
+            token = authorization[1]
+        } else {
+            token = ''
+        }
+        if (token) {
+            if (!Token) {
+                return false
+            }
+        }
+    }
 }
