@@ -7,8 +7,6 @@ export const userRoutes = (app: any) => {
 
     const userAPI = new UserAPI()
 
-    router.post(UserRoutes.root, userAPI.create)
-
     router.get(UserRoutes.root, userAPI.getAll)
 
     router.get(UserRoutes.userId, userAPI.getOne)

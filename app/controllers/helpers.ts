@@ -5,6 +5,7 @@ import {
 } from './types'
 
 const Token = db.tokens
+const User = db.users
 
 const makeErrorObject = (code: string, title: string) => ({
     code,
@@ -19,7 +20,8 @@ export const errors: Record<any, Error> = {
     NOT_FOUND: makeErrorObject('NotFound', 'Not found'),
     FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
     TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
-    USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found')
+    USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
+    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists')
 }
 
 export const defaultResponseObject = () => ({
@@ -82,5 +84,11 @@ export class Auth {
             }
             return await id()
         }
+        return false
     }
+}
+
+export const checkEmail = async (email: any) => {
+    const count = await User.findOne({Where: {email}})
+    return count !== null
 }

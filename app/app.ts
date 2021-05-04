@@ -1,4 +1,5 @@
 import {db} from './models/index'
+import {authRoutes} from './routes/auth.routes'
 import {userRoutes} from './routes/user.routes'
 
 const express = require('express')
@@ -26,6 +27,7 @@ app.get('/', (req: any, res: any) => {
 })
 
 userRoutes(app)
+authRoutes(app)
 
 const PORT = process.env.PORT || 9000;
 
