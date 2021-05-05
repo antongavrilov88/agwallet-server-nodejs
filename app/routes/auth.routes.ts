@@ -9,5 +9,7 @@ export const authRoutes = (app: any) => {
 
     router.post(AuthRoutes.signUp, authAPI.signUp)
 
+    router.post(AuthRoutes.signIn, authAPI.signIn)
+
     app.use(AuthRoutes.baseAuthRoute, router)
 }

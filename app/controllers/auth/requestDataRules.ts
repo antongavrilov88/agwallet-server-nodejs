@@ -5,3 +5,10 @@ export const signUpDataRules = {
         admin: 'required'
     }
 }
+
+export const signInDataRules = {
+    body: {
+        email: 'required',
+        password: 'required'
+    }
+}

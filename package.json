@@ -8,7 +8,7 @@
     "start": "webpack && node dist/bundle.js",
     "lint": "node_modules/.bin/eslint .",
     "lint-fix": "node_modules/.bin/eslint . --fix",
-    "test": "jest",
+    "test": "webpack && jest",
     "test-check": "webpack && jest --detectOpenHandles",
     "test:watch": "jest --watch",
     "prepare": "husky install"
