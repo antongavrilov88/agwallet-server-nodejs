@@ -1,7 +1,7 @@
 import Validator from 'validatorjs'
 import {suid} from 'rand-token'
 import {
-    errors, createBadResponse, createSuccssResponse, checkEmail
+    errors, createBadResponse, createSuccessResponse, checkEmail
 } from '../helpers'
 import {db} from '../../models/index'
 import {signInDataRules, signUpDataRules} from './requestDataRules'
@@ -62,7 +62,7 @@ export class AuthAPI extends LimitedAccessView {
                 token: newToken.token
             }
 
-            res.status(201).send(createSuccssResponse(responseObject))
+            res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
@@ -114,7 +114,7 @@ export class AuthAPI extends LimitedAccessView {
             }
 
             res.status(201).send(
-                createSuccssResponse(responseObject)
+                createSuccessResponse(responseObject)
             )
         } catch {
             res.status(500).send(
@@ -144,7 +144,7 @@ export class AuthAPI extends LimitedAccessView {
             }
 
             res.status(200).send(
-                createSuccssResponse('User logout')
+                createSuccessResponse('User logout')
             )
         } catch (error) {
             res.status(500).send(

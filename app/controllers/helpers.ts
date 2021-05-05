@@ -51,7 +51,7 @@ export const successResponseObject = (data: ResponseData) => {
     return responseObject
 }
 
-export const createSuccssResponse = (data: any) => successResponseObject(data)
+export const createSuccessResponse = (data: any) => successResponseObject(data)
 
 export const createBadResponse = (error: Error) => errorResponseObject(error)
 
