@@ -1,5 +1,5 @@
 import {UserAPI} from '../controllers/user/user.controller'
-import {UserRoutes} from './constans'
+import {UserRoutes} from './constants'
 
 export const userRoutes = (app: any) => {
     // eslint-disable-next-line global-require

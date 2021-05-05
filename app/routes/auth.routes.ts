@@ -1,5 +1,5 @@
 import {AuthAPI} from '../controllers/auth/auth.controller'
-import {AuthRoutes} from './constans'
+import {AuthRoutes} from './constants'
 
 export const authRoutes = (app: any) => {
     // eslint-disable-next-line global-require
