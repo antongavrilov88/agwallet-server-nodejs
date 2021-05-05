@@ -11,5 +11,7 @@ export const authRoutes = (app: any) => {
 
     router.post(AuthRoutes.signIn, authAPI.signIn)
 
+    router.post(AuthRoutes.signOut, authAPI.signOut)
+
     app.use(AuthRoutes.baseAuthRoute, router)
 }

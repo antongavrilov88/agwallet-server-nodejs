@@ -7,5 +7,6 @@ export enum UserRoutes {
 export enum AuthRoutes {
     baseAuthRoute = '/api/auth',
     signUp = '/signup',
-    signIn = '/signin'
+    signIn = '/signin',
+    signOut = '/signout'
 }

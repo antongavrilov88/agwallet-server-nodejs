@@ -123,4 +123,34 @@ export class AuthAPI extends LimitedAccessView {
             )
         }
     }
+    signOut = async (req: any, res: any) => {
+        try {
+            const status = await AuthAPI.limitAccess(req)
+            if (!status) {
+                res.status(401).send(
+                    createBadResponse(errors.TOKEN_NOT_PROVIDED)
+                )
+                return
+            }
+
+            const token = req.headers.authorization.split(' ')
+
+            const logout = await Token.destroy(
+                {where: {token: token[1]}}
+            )
+            if (!logout) {
+                res.status(500).send(
+                    createBadResponse(errors.INTERNAL_ERROR)
+                )
+            }
+
+            res.status(200).send(
+                createSuccssResponse('User logout')
+            )
+        } catch (error) {
+            res.status(500).send(
+                createBadResponse(errors.INTERNAL_ERROR)
+            )
+        }
+    }
 }
