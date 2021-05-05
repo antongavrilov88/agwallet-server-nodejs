@@ -12,7 +12,7 @@ module.exports = {
         overlay: true,
         open: true
     },
-    entry: './app/app',
+    entry: './app/index',
     output: {
         path: path.join(__dirname, '/dist'),
         filename: 'bundle.js'

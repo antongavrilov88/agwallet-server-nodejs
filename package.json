@@ -8,9 +8,7 @@
     "start": "webpack && node dist/bundle.js",
     "lint": "node_modules/.bin/eslint .",
     "lint-fix": "node_modules/.bin/eslint . --fix",
-    "test": "webpack && jest",
-    "test-check": "webpack && jest --detectOpenHandles",
-    "test:watch": "jest --watch",
+    "test": "jest",
     "prepare": "husky install"
   },
   "repository": {
@@ -44,6 +42,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "mocha": "^8.3.2",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
     "postgres": "^1.0.2",

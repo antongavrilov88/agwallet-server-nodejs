@@ -13,6 +13,7 @@ const Token = db.tokens
 export class AuthAPI extends LimitedAccessView {
     signUp = async (req: any, res: any) => {
         try {
+            console.log(req)
             const validation = new Validator(req, signUpDataRules)
 
             if (validation.fails()) {

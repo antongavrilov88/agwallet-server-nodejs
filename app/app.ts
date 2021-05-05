@@ -28,9 +28,3 @@ app.get('/', (req: any, res: any) => {
 
 userRoutes(app)
 authRoutes(app)
-
-const PORT = process.env.PORT || 9000;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`)
-})
