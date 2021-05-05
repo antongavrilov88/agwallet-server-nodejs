@@ -15,6 +15,11 @@ const user = {
     admin: true
 }
 
+const signInUser = {
+    email: 'Anton',
+    password: '1234'
+}
+
 beforeAll(async (done) => {
     await db.sequelize.sync({force: true}).then(() => {
     })
@@ -37,6 +42,16 @@ describe('Auth API tests', () => {
         await request(app)
             .post(AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
             .send(user)
+            .set('Accept', 'application/json')
+            .then((data: any) => {
+                expect(data.status).toEqual(409)
+            })
+        done()
+    })
+    it('Should return 409 response status to signin request with user alredy in system', async (done) => {
+        await request(app)
+            .post(AuthRoutes.baseAuthRoute + AuthRoutes.signIn)
+            .send(signInUser)
             .set('Accept', 'application/json')
             .then((data: any) => {
                 expect(data.status).toEqual(409)
