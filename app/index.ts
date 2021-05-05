@@ -1,5 +1,5 @@
 import {app} from './app'
-import { db } from './models/index'
+import {db} from './models/index'
 
 db.sequelize.sync({force: true}).then(() => {
 })
