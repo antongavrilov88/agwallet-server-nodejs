@@ -89,6 +89,6 @@ export class Auth {
 }
 
 export const checkEmail = async (email: any) => {
-    const count = await User.findOne({Where: {email}})
+    const count = await User.findOne({where: {email}})
     return count !== null
 }
