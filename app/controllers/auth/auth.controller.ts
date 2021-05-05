@@ -64,7 +64,6 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccssResponse(responseObject))
         } catch (err) {
-            console.log(err)
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
             )
