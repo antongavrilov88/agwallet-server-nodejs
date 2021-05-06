@@ -14,6 +14,6 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({extended: true}))
 
-app.get('/', (req: any, res: any) => {
+app.get('/', (_req: any, res: any) => {
     res.json({message: 'Welcome to sample api-server'})
 })
