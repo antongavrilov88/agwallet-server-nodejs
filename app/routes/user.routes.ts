@@ -1,5 +1,6 @@
+import {apiVersion} from '../controllers/config'
 import {UserAPI} from '../controllers/user/user.controller'
-import {UserRoutes} from './constants'
+import {baseUrl, UserRoutes} from './constants'
 
 export const userRoutes = (app: any) => {
     // eslint-disable-next-line global-require
@@ -11,5 +12,5 @@ export const userRoutes = (app: any) => {
 
     router.get(UserRoutes.userId, userAPI.getOne)
 
-    app.use(UserRoutes.baseUserRoute, router)
+    app.use(baseUrl + apiVersion + UserRoutes.baseUserRoute, router)
 }

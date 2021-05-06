@@ -1,5 +1,6 @@
 import {AuthAPI} from '../controllers/auth/auth.controller'
-import {AuthRoutes} from './constants'
+import {AuthRoutes, baseUrl} from './constants'
+import {apiVersion} from '../controllers/config'
 
 export const authRoutes = (app: any) => {
     // eslint-disable-next-line global-require
@@ -13,5 +14,5 @@ export const authRoutes = (app: any) => {
 
     router.post(AuthRoutes.signOut, authAPI.signOut)
 
-    app.use(AuthRoutes.baseAuthRoute, router)
+    app.use(baseUrl + apiVersion + AuthRoutes.baseAuthRoute, router)
 }

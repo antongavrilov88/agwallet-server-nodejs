@@ -1,11 +1,13 @@
+export const baseUrl = '/api/'
+
 export enum UserRoutes {
-    baseUserRoute = '/api/users',
+    baseUserRoute = '/users',
     root = '/',
     userId = '/:id'
 }
 
 export enum AuthRoutes {
-    baseAuthRoute = '/api/auth',
+    baseAuthRoute = '/auth',
     signUp = '/signup',
     signIn = '/signin',
     signOut = '/signout'
