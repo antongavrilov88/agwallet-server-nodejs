@@ -172,8 +172,15 @@ export class AuthAPI extends LimitedAccessView {
                 )
             }
 
+            const responseObject = {
+                type: 'auth',
+                links: {
+                    self: ''
+                }
+            }
+
             res.status(200).send(
-                createSuccessResponse('User logout')
+                createSuccessResponse(responseObject)
             )
         } catch (error) {
             res.status(500).send(
