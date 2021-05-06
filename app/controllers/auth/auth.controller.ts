@@ -43,7 +43,6 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            // TODO add headers to jest tests
             const token = {
                 userId: newUser.id,
                 token: suid(16)
@@ -57,8 +56,13 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
+            const responseUser = {
+                id: newUser.id,
+                email: newUser.email
+            }
+
             const responseObject = {
-                user: newUser,
+                user: responseUser,
                 token: newToken.token
             }
 
