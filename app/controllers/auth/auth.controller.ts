@@ -133,7 +133,13 @@ export class AuthAPI extends LimitedAccessView {
             }
 
             const responseObject = {
-                token: newToken.token
+                type: 'auth',
+                attributes: {
+                    token: newToken.token
+                },
+                links: {
+                    self: ''
+                }
             }
 
             res.status(201).send(
