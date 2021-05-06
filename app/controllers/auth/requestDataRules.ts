@@ -12,7 +12,12 @@ export const signUpDataRules = {
 
 export const signInDataRules = {
     body: {
-        email: 'required',
-        password: 'required'
+        data: {
+            type: 'required',
+            attributes: {
+                email: 'required',
+                password: 'required'
+            }
+        }
     }
 }

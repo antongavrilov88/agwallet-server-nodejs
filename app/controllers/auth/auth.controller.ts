@@ -73,7 +73,6 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
-            console.log(err)
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
             )
@@ -90,7 +89,7 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            const user = await User.findOne({where: {email: req.body.email}})
+            const user = await User.findOne({where: {email: req.body.data.attributes.email}})
             if (!user) {
                 res.status(404).send(
                     createBadResponse(errors.USER_NOT_FOUND)
@@ -108,7 +107,10 @@ export class AuthAPI extends LimitedAccessView {
 
             const userPassword = user.password
 
-            const passwordVerifyStatus = bcrypt.compareSync(req.body.password, userPassword)
+            const passwordVerifyStatus = bcrypt.compareSync(
+                req.body.data.attributes.password,
+                userPassword
+            )
 
             if (!passwordVerifyStatus) {
                 res.status(401).send(

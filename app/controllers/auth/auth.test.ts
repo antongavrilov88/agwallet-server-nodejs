@@ -21,13 +21,23 @@ const signUpUser = {
 }
 
 const signInUser = {
-    email: 'Anton',
-    password: '1234'
+    data: {
+        type: 'auth',
+        attributes: {
+            email: 'Anton',
+            password: '1234'
+        }
+    }
 }
 
 const signInUserWrongPassword = {
-    email: 'Anton',
-    password: '1232'
+    data: {
+        type: 'auth',
+        attributes: {
+            email: 'Anton',
+            password: '12shdg'
+        }
+    }
 }
 
 beforeEach(async (done) => {
