@@ -21,7 +21,8 @@ export const errors: Record<any, Error> = {
     FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
     TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
     USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
-    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists')
+    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
+    WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password')
 }
 
 export const defaultResponseObject = () => ({

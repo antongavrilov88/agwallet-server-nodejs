@@ -7,6 +7,8 @@ import {db} from '../../models/index'
 import {signInDataRules, signUpDataRules} from './requestDataRules'
 import {LimitedAccessView} from '../LimitedAccessView'
 
+const bcrypt = require('bcrypt')
+
 const User = db.users
 const Token = db.tokens
 
@@ -29,11 +31,14 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
+            const hashPassword = bcrypt.hashSync(req.body.password, 10)
+
             const user = {
                 email: req.body.email,
-                password: req.body.password,
+                password: hashPassword,
                 admin: req.body.admin
             }
+
             const newUser = await User.create(user)
 
             if (!newUser) {
@@ -68,6 +73,7 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
+            // console.log(err)
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
             )
@@ -96,6 +102,17 @@ export class AuthAPI extends LimitedAccessView {
             if (status) {
                 res.status(409).send(
                     createBadResponse(errors.AUTH_CONFLICT)
+                )
+                return
+            }
+
+            const userPassword = user.password
+
+            const passwordVerifyStatus = bcrypt.compareSync(req.body.password, userPassword)
+
+            if (!passwordVerifyStatus) {
+                res.status(401).send(
+                    createBadResponse(errors.WRONG_PASSWORD)
                 )
                 return
             }
