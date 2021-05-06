@@ -59,8 +59,8 @@ export const createBadResponse = (error: Error) => errorResponseObject(error)
 export const checkUserStatus = async (token: any) => {
     const status = Token.findOne({where: {token}})
         .then((data: any) => (data !== null ? data.id : false))
-        .catch((err: {message: any}) => {
-            console.log(err)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .catch((_err: {message: any}) => {
         })
     return await status
 }
@@ -78,8 +78,8 @@ export class Auth {
             const id = async () => {
                 const status = Token.findOne({where: {token}})
                     .then((data: any) => (data !== null ? data.id : false))
-                    .catch((err: {message: any}) => {
-                        console.log(err)
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    .catch((_err: {message: any}) => {
                     })
                 return await status
             }
