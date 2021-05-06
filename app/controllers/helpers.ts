@@ -30,7 +30,7 @@ export const defaultResponseObject = () => ({
         version: apiVersion
     },
     meta: {
-        copyright: 'AGwallet server',
+        copyright: 'Anton Gavrilov',
         authors: [
             'Anton Gavrilov'
         ]

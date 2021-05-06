@@ -61,14 +61,14 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            const responseUser = {
-                id: newUser.id,
-                email: newUser.email
-            }
-
             const responseObject = {
-                user: responseUser,
-                token: newToken.token
+                type: 'auth',
+                attributes: {
+                    token: newToken.token
+                },
+                links: {
+                    self: ''
+                }
             }
 
             res.status(201).send(createSuccessResponse(responseObject))
@@ -133,7 +133,13 @@ export class AuthAPI extends LimitedAccessView {
             }
 
             const responseObject = {
-                token: newToken.token
+                type: 'auth',
+                attributes: {
+                    token: newToken.token
+                },
+                links: {
+                    self: ''
+                }
             }
 
             res.status(201).send(
@@ -166,8 +172,15 @@ export class AuthAPI extends LimitedAccessView {
                 )
             }
 
+            const responseObject = {
+                type: 'auth',
+                links: {
+                    self: ''
+                }
+            }
+
             res.status(200).send(
-                createSuccessResponse('User logout')
+                createSuccessResponse(responseObject)
             )
         } catch (error) {
             res.status(500).send(
