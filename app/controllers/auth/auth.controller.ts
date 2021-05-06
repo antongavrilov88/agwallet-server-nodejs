@@ -1,11 +1,13 @@
 import Validator from 'validatorjs'
 import {suid} from 'rand-token'
+import {baseUrl, AuthRoutes} from '../../routes/constants'
 import {
     errors, createBadResponse, createSuccessResponse, checkEmail
 } from '../helpers'
 import {db} from '../../models/index'
 import {signInDataRules, signUpDataRules} from './requestDataRules'
 import {LimitedAccessView} from '../LimitedAccessView'
+import {apiVersion} from '../config'
 
 const bcrypt = require('bcrypt')
 
@@ -67,7 +69,7 @@ export class AuthAPI extends LimitedAccessView {
                     token: newToken.token
                 },
                 links: {
-                    self: ''
+                    self: baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp
                 }
             }
 
@@ -138,7 +140,7 @@ export class AuthAPI extends LimitedAccessView {
                     token: newToken.token
                 },
                 links: {
-                    self: ''
+                    self: baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signIn
                 }
             }
 
@@ -175,7 +177,7 @@ export class AuthAPI extends LimitedAccessView {
             const responseObject = {
                 type: 'auth',
                 links: {
-                    self: ''
+                    self: baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut
                 }
             }
 
