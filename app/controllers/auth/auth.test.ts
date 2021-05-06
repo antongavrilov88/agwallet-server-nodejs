@@ -3,7 +3,7 @@ import {app} from '../../app'
 import {db} from '../../models/index'
 import {userRoutes} from '../../routes/user.routes'
 import {authRoutes} from '../../routes/auth.routes'
-import { apiVersion } from '../config'
+import {apiVersion} from '../config'
 
 const request = require('supertest')
 
