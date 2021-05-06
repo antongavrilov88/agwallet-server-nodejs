@@ -24,19 +24,19 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            if (await checkEmail(req.body.email)) {
+            if (await checkEmail(req.body.data.attributes.email)) {
                 res.status(409).send(
                     createBadResponse(errors.USER_CONFLICT)
                 )
                 return
             }
 
-            const hashPassword = bcrypt.hashSync(req.body.password, 10)
+            const hashPassword = bcrypt.hashSync(req.body.data.attributes.password, 10)
 
             const user = {
-                email: req.body.email,
+                email: req.body.data.attributes.email,
                 password: hashPassword,
-                admin: req.body.admin
+                admin: false
             }
 
             const newUser = await User.create(user)
@@ -73,7 +73,7 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
-            // console.log(err)
+            console.log(err)
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
             )

@@ -11,9 +11,13 @@ userRoutes(app)
 authRoutes(app)
 
 const signUpUser = {
-    email: 'Anton',
-    password: '1234',
-    admin: true
+    data: {
+        type: 'auth',
+        attributes: {
+            email: 'Anton',
+            password: '1234'
+        }
+    }
 }
 
 const signInUser = {
