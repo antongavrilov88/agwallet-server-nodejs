@@ -24,19 +24,19 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            if (await checkEmail(req.body.email)) {
+            if (await checkEmail(req.body.data.attributes.email)) {
                 res.status(409).send(
                     createBadResponse(errors.USER_CONFLICT)
                 )
                 return
             }
 
-            const hashPassword = bcrypt.hashSync(req.body.password, 10)
+            const hashPassword = bcrypt.hashSync(req.body.data.attributes.password, 10)
 
             const user = {
-                email: req.body.email,
+                email: req.body.data.attributes.email,
                 password: hashPassword,
-                admin: req.body.admin
+                admin: false
             }
 
             const newUser = await User.create(user)
@@ -73,7 +73,6 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
-            // console.log(err)
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
             )
@@ -90,7 +89,7 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            const user = await User.findOne({where: {email: req.body.email}})
+            const user = await User.findOne({where: {email: req.body.data.attributes.email}})
             if (!user) {
                 res.status(404).send(
                     createBadResponse(errors.USER_NOT_FOUND)
@@ -108,7 +107,10 @@ export class AuthAPI extends LimitedAccessView {
 
             const userPassword = user.password
 
-            const passwordVerifyStatus = bcrypt.compareSync(req.body.password, userPassword)
+            const passwordVerifyStatus = bcrypt.compareSync(
+                req.body.data.attributes.password,
+                userPassword
+            )
 
             if (!passwordVerifyStatus) {
                 res.status(401).send(

@@ -1,14 +1,23 @@
 export const signUpDataRules = {
     body: {
-        email: 'required',
-        password: 'required',
-        admin: 'required'
+        data: {
+            type: 'required',
+            attributes: {
+                email: 'required',
+                password: 'required'
+            }
+        }
     }
 }
 
 export const signInDataRules = {
     body: {
-        email: 'required',
-        password: 'required'
+        data: {
+            type: 'required',
+            attributes: {
+                email: 'required',
+                password: 'required'
+            }
+        }
     }
 }
