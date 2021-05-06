@@ -20,6 +20,11 @@ const signInUser = {
     password: '1234'
 }
 
+const signInUserWrongPassword = {
+    email: 'Anton',
+    password: '1232'
+}
+
 beforeEach(async (done) => {
     await db.sequelize.sync({force: true}).then(() => {
     })
@@ -102,6 +107,27 @@ describe('Auth API tests', () => {
             .set('Accept', 'application/json')
             .then((data: any) => {
                 expect(data.status).toEqual(201)
+            })
+        done()
+    })
+    it('Should return 401 response status to signin request with wrong password', async (done) => {
+        const token = await request(app)
+            .post(AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
+            .send(signUpUser)
+            .set('Accept', 'application/json')
+            .then((data: any) => JSON.parse(data.text).data.token)
+        await request(app)
+            .post(AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
+            .send()
+            .set('Authorization', `Bearer ${token}`)
+            .set('Accept', 'application/json')
+            .then(() => {})
+        await request(app)
+            .post(AuthRoutes.baseAuthRoute + AuthRoutes.signIn)
+            .send(signInUserWrongPassword)
+            .set('Accept', 'application/json')
+            .then((data: any) => {
+                expect(data.status).toEqual(401)
             })
         done()
     })

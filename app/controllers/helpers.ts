@@ -21,7 +21,8 @@ export const errors: Record<any, Error> = {
     FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
     TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
     USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
-    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists')
+    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
+    WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password')
 }
 
 export const defaultResponseObject = () => ({
@@ -58,8 +59,8 @@ export const createBadResponse = (error: Error) => errorResponseObject(error)
 export const checkUserStatus = async (token: any) => {
     const status = Token.findOne({where: {token}})
         .then((data: any) => (data !== null ? data.id : false))
-        .catch((err: {message: any}) => {
-            console.log(err)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .catch((_err: {message: any}) => {
         })
     return await status
 }
@@ -77,8 +78,8 @@ export class Auth {
             const id = async () => {
                 const status = Token.findOne({where: {token}})
                     .then((data: any) => (data !== null ? data.id : false))
-                    .catch((err: {message: any}) => {
-                        console.log(err)
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    .catch((_err: {message: any}) => {
                     })
                 return await status
             }

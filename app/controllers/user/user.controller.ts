@@ -10,7 +10,6 @@ export class UserAPI extends LimitedAccessView {
     getAll = async (req: any, res: any) => {
         try {
             const status = await UserAPI.limitAccess(req)
-            console.log(status)
             if (!status) {
                 res.status(401).send(
                     createBadResponse(errors.TOKEN_NOT_PROVIDED)
