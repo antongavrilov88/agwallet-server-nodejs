@@ -61,14 +61,14 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            const responseUser = {
-                id: newUser.id,
-                email: newUser.email
-            }
-
             const responseObject = {
-                user: responseUser,
-                token: newToken.token
+                type: 'auth',
+                attributes: {
+                    token: newToken.token
+                },
+                links: {
+                    self: ''
+                }
             }
 
             res.status(201).send(createSuccessResponse(responseObject))
