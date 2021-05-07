@@ -3,7 +3,7 @@ import {db} from './models/index'
 import {authRoutes} from './routes/auth.routes'
 import {userRoutes} from './routes/user.routes'
 
-db.sequelize.sync({force: true}).then(() => {
+db.sequelize.sync().then(() => {
 })
 
 userRoutes(app)

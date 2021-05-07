@@ -19,6 +19,10 @@ Create the database container
 ```
 docker-compose up --build -d agwallet-postgres
 ```
+Create the test database container
+```
+docker-compose up --build -d agwallet-postgres-test
+```
 
 Start the app
 ```
