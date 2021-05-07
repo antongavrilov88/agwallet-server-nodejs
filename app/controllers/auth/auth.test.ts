@@ -1,14 +1,10 @@
-import {AuthRoutes, baseUrl} from '../../routes/constants'
 import {app} from '../../app'
 import {db} from '../../models/index'
 import {userRoutes} from '../../routes/user.routes'
 import {authRoutes} from '../../routes/auth.routes'
-import {apiVersion} from '../config'
 import {
     signInUser, signInUserWrongPassword, signUpUser, TestAPIHelper
-} from '../testHelpers'
-
-const request = require('supertest')
+} from '../TestAPIHelper'
 
 userRoutes(app)
 authRoutes(app)
@@ -21,86 +17,45 @@ beforeEach(async (done) => {
 
 describe('Auth API tests', () => {
     it('Should return 201 response status and token to signup request with valid data', async (done) => {
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => {
-                expect(data.status).toEqual(201)
-                expect(JSON.parse(data.text).data.type).toEqual('auth')
-                expect(JSON.parse(data.text).data.attributes.token).toBeDefined()
-            })
+        const newUser: any = await TestAPIHelper.createUser(signUpUser)
+        expect(newUser.status).toEqual(201)
+        expect(JSON.parse(newUser.text).data.type).toEqual('auth')
+        expect(JSON.parse(newUser.text).data.attributes.token).toBeDefined()
         done()
     })
     it('Should return 409 response status to signup request with existing email', async (done) => {
         await TestAPIHelper.createUser(signUpUser)
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => {
-                expect(data.status).toEqual(409)
-            })
+        const conflictUserResponse: any = await TestAPIHelper.createUser(signUpUser)
+        expect(conflictUserResponse.status).toEqual(409)
         done()
     })
     it('Should return 409 response status to signin request with user already in system', async (done) => {
         await TestAPIHelper.createUser(signUpUser)
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signIn)
-            .send(signInUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => {
-                expect(data.status).toEqual(409)
-            })
+        const conflictUserResponse: any = await TestAPIHelper.signInUser(signInUser)
+        expect(conflictUserResponse.status).toEqual(409)
         done()
     })
     it('Should return 200 response status to signout request with user valid data', async (done) => {
         const newUser: any = await TestAPIHelper.createUser(signUpUser)
         const {token} = JSON.parse(newUser.text).data.attributes
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
-            .send()
-            .set('Authorization', `Bearer ${token}`)
-            .set('Accept', 'application/json')
-            .then((data: any) => {
-                expect(data.status).toEqual(200)
-            })
+        const signOutResponse: any = await TestAPIHelper.signOut(token)
+        expect(signOutResponse.status).toEqual(200)
         done()
     })
     it('Should return 201 response status to signin request with valid data', async (done) => {
         const newUser: any = await TestAPIHelper.createUser(signUpUser)
         const {token} = JSON.parse(newUser.text).data.attributes
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
-            .send()
-            .set('Authorization', `Bearer ${token}`)
-            .set('Accept', 'application/json')
-            .then(() => {})
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signIn)
-            .send(signInUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => {
-                expect(data.status).toEqual(201)
-            })
+        await TestAPIHelper.signOut(token)
+        const signInResponse = await TestAPIHelper.signInUser(signInUser)
+        expect(signInResponse.status).toEqual(201)
         done()
     })
     it('Should return 401 response status to signin request with wrong password', async (done) => {
         const newUser: any = await TestAPIHelper.createUser(signUpUser)
         const {token} = JSON.parse(newUser.text).data.attributes
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
-            .send()
-            .set('Authorization', `Bearer ${token}`)
-            .set('Accept', 'application/json')
-            .then(() => {})
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signIn)
-            .send(signInUserWrongPassword)
-            .set('Accept', 'application/json')
-            .then((data: any) => {
-                expect(data.status).toEqual(401)
-            })
+        await TestAPIHelper.signOut(token)
+        const wrongSignInResponse = await TestAPIHelper.signInUser(signInUserWrongPassword)
+        expect(wrongSignInResponse.status).toEqual(401)
         done()
     })
 })
