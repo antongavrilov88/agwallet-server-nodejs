@@ -4,42 +4,14 @@ import {db} from '../../models/index'
 import {userRoutes} from '../../routes/user.routes'
 import {authRoutes} from '../../routes/auth.routes'
 import {apiVersion} from '../config'
-import {createUser} from '../testHelpers'
+import {
+    createUser, signInUser, signInUserWrongPassword, signUpUser
+} from '../testHelpers'
 
 const request = require('supertest')
 
 userRoutes(app)
 authRoutes(app)
-
-const signUpUser = {
-    data: {
-        type: 'auth',
-        attributes: {
-            email: 'Anton',
-            password: '1234'
-        }
-    }
-}
-
-const signInUser = {
-    data: {
-        type: 'auth',
-        attributes: {
-            email: 'Anton',
-            password: '1234'
-        }
-    }
-}
-
-const signInUserWrongPassword = {
-    data: {
-        type: 'auth',
-        attributes: {
-            email: 'Anton',
-            password: '12shdg'
-        }
-    }
-}
 
 beforeEach(async (done) => {
     await db.sequelize.sync({force: true}).then(() => {
