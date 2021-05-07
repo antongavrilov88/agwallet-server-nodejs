@@ -4,6 +4,7 @@ import {db} from '../../models/index'
 import {userRoutes} from '../../routes/user.routes'
 import {authRoutes} from '../../routes/auth.routes'
 import {apiVersion} from '../config'
+import {createUser} from '../testHelpers'
 
 const request = require('supertest')
 
@@ -60,11 +61,7 @@ describe('Auth API tests', () => {
         done()
     })
     it('Should return 409 response status to signup request with existing email', async (done) => {
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then(() => {})
+        await createUser(signUpUser)
         await request(app)
             .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
             .send(signUpUser)
@@ -75,11 +72,7 @@ describe('Auth API tests', () => {
         done()
     })
     it('Should return 409 response status to signin request with user already in system', async (done) => {
-        await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then(() => {})
+        await createUser(signUpUser)
         await request(app)
             .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signIn)
             .send(signInUser)
@@ -90,11 +83,8 @@ describe('Auth API tests', () => {
         done()
     })
     it('Should return 200 response status to signout request with user valid data', async (done) => {
-        const token = await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => JSON.parse(data.text).data.attributes.token)
+        const newUser: any = await createUser(signUpUser)
+        const {token} = JSON.parse(newUser.text).data.attributes
         await request(app)
             .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
             .send()
@@ -106,11 +96,8 @@ describe('Auth API tests', () => {
         done()
     })
     it('Should return 201 response status to signin request with valid data', async (done) => {
-        const token = await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => JSON.parse(data.text).data.attributes.token)
+        const newUser: any = await createUser(signUpUser)
+        const {token} = JSON.parse(newUser.text).data.attributes
         await request(app)
             .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
             .send()
@@ -127,11 +114,8 @@ describe('Auth API tests', () => {
         done()
     })
     it('Should return 401 response status to signin request with wrong password', async (done) => {
-        const token = await request(app)
-            .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
-            .send(signUpUser)
-            .set('Accept', 'application/json')
-            .then((data: any) => JSON.parse(data.text).data.attributes.token)
+        const newUser: any = await createUser(signUpUser)
+        const {token} = JSON.parse(newUser.text).data.attributes
         await request(app)
             .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut)
             .send()
