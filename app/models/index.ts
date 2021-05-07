@@ -9,7 +9,5 @@ export const db:any = {}
 db.Sequelize = Sequelize
 db.sequelize = sequelize
 
-console.log('PISKAAAAAAA', sequelize)
-
 db.users = userModel(sequelize, Sequelize)
 db.tokens = tokenModel(sequelize, Sequelize)
