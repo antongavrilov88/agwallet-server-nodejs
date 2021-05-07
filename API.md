@@ -8,7 +8,6 @@ JSON API of Server is built according to the requirements described in [JsonAPI.
     - [Register a user](#register-a-user)
     - [Log in a user](#log-in-a-user)
     - [Log out a user](#log-out-a-user)
-    - [Read user authorization status](#read-user-authorization-status)
 
 ## Basic terms
 
@@ -55,7 +54,7 @@ Content-Type: application/json
             "token": "<authorization token>"
         },
         "links": {
-            "self": "/api/v1.0/auth/register"
+            "self": "/api/v1.0/auth/signup"
         }
     }
 }
@@ -129,7 +128,7 @@ Content-Type: application/json
             "token": "<authorization token>"
         },
         "links": {
-            "self": "/api/v1.0/auth/login"
+            "self": "/api/v1.0/auth/signin"
         }
     }
 }
@@ -200,7 +199,7 @@ Content-Type: application/json
     "data": {
         "type": "auth",
         "links": {
-            "self": "/api/v1.0/auth/logout"
+            "self": "/api/v1.0/auth/signout"
         }
     }
 }
@@ -218,33 +217,6 @@ Content-Type: application/json
     "errors": [{
         "code": "Exception",
         "title": "Request can not be done"
-    }]
-}
-```
-
-If the given `authorization token` is invalid Server sends the following error responses:
-```
-HTTP/1.1 401 Unauthorized
-Content-Type: application/json
-
-{
-    <basic JSON fields>,
-    "errors": [{
-        "code": "TokenNotPresent",
-        "title": "Auth token is not present"
-    }]
-}
-```
-or
-```
-HTTP/1.1 401 Unauthorized
-Content-Type: application/json
-
-{
-    <basic JSON fields>,
-    "errors": [{
-        "code": "TokenBlacklisted",
-        "title": "Auth token is blacklisted"
     }]
 }
 ```
