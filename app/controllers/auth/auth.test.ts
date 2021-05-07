@@ -47,7 +47,7 @@ beforeEach(async (done) => {
 })
 
 describe('Auth API tests', () => {
-    it('Should return 201 response status and Anton as email to signup request with valid data', async (done) => {
+    it('Should return 201 response status and token to signup request with valid data', async (done) => {
         await request(app)
             .post(baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp)
             .send(signUpUser)
