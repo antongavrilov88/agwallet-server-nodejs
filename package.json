@@ -5,10 +5,10 @@
   "main": "server.js",
   "scripts": {
     "build": "webpack",
-    "start": "webpack && node dist/bundle.js",
+    "start": "webpack --mode development && node dist/bundle.js",
     "lint": "node_modules/.bin/eslint .",
     "lint-fix": "node_modules/.bin/eslint . --fix",
-    "test": "jest --forceExit",
+    "test": "webpack && jest --forceExit",
     "prepare": "husky install"
   },
   "repository": {
