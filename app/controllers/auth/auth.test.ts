@@ -2,9 +2,10 @@ import {app} from '../../app'
 import {db} from '../../models/index'
 import {userRoutes} from '../../routes/user.routes'
 import {authRoutes} from '../../routes/auth.routes'
+import {TestAPIHelper} from '../TestAPIHelper'
 import {
-    signInUser, signInUserWrongPassword, signUpUser, TestAPIHelper
-} from '../TestAPIHelper'
+    signInUser, signInUserWrongPassword, signUpUser
+} from '../TestRequestObjects'
 
 userRoutes(app)
 authRoutes(app)
