@@ -12,7 +12,7 @@ export const authRoutes = (app: any) => {
 
     router.post(AuthRoutes.signIn, authAPI.signIn)
 
-    router.post(AuthRoutes.signOut, authAPI.signOut)
+    router.delete(AuthRoutes.signOut, authAPI.signOut)
 
     app.use(baseUrl + apiVersion + AuthRoutes.baseAuthRoute, router)
 }
