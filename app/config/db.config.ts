@@ -6,9 +6,9 @@ const PORT = process.env.NODE_ENV === 'development' ? 5437 : 5438
 const sequelizeOptions: SequelizeOptions = {
     host: HOST,
     port: PORT,
-    username: 'agwallet',
+    username: 'sampleUser',
     password: 'password',
-    database: 'agwalletdb',
+    database: 'sampledb',
 
     dialect: 'postgres',
     pool: {

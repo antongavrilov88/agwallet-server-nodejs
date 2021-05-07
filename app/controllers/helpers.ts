@@ -7,7 +7,7 @@ import {
 const Token = db.tokens
 const User = db.users
 
-const makeErrorObject = (code: string, title: string) => ({
+export const makeErrorObject = (code: string, title: string) => ({
     code,
     title
 })
@@ -65,6 +65,11 @@ export const checkUserStatus = async (token: any) => {
     return await status
 }
 
+export const checkEmail = async (email: any) => {
+    const count = await User.findOne({where: {email}})
+    return count !== null
+}
+
 export class Auth {
     static async status(header: string) {
         let token: string | null = null
@@ -87,9 +92,4 @@ export class Auth {
         }
         return false
     }
-}
-
-export const checkEmail = async (email: any) => {
-    const count = await User.findOne({where: {email}})
-    return count !== null
 }

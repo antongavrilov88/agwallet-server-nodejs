@@ -1,13 +1,13 @@
 version: "3"
 
 services:
-    agwallet-api:
+    sample-api:
         build:
             context: .
         depends_on:
-            - agwallet-postgres
+            - sample-postgres
         environment:
-            DATABASE_URL: postgres://agwallet:password@postgres:5437/agwalletdb
+            DATABASE_URL: postgres://sampleUser:password@postgres:5437/sampledb
             NODE_ENV: development
             PORT: 8000
         ports:
@@ -16,9 +16,9 @@ services:
         networks:
             [awesome]
 
-    agwallet-postgres:
-        hostname: agwallet-postgres
-        container_name: agwallet-postgres
+    sample-postgres:
+        hostname: sample-postgres
+        container_name: sample-postgres
         image: postgres:9.6.5-alpine
         ports:
             ['5437:5432']
@@ -26,15 +26,15 @@ services:
             - ./postgres-initdb.sh:/docker-entrypoint-initdb.d/init.sh
         restart: always
         environment:
-            POSTGRES_USER: agwallet
+            POSTGRES_USER: sampleUser
             POSTGRES_PASSWORD: password
-            POSTGRES_DB: agwalletdb
+            POSTGRES_DB: sampledb
         networks:
             [awesome]
             
-    agwallet-postgres-test:
-        hostname: agwallet-postgres-test
-        container_name: agwallet-postgres-test
+    sample-postgres-test:
+        hostname: sample-postgres-test
+        container_name: sample-postgres-test
         image: postgres:9.6.5-alpine
         ports:
             ['5438:5432']
@@ -42,14 +42,14 @@ services:
             - ./postgres-initdb.sh:/docker-entrypoint-initdb.d/init.sh
         restart: always
         environment:
-            POSTGRES_USER: agwallet
+            POSTGRES_USER: sampleUser
             POSTGRES_PASSWORD: password
-            POSTGRES_DB: agwalletdb
+            POSTGRES_DB: sampledb
         networks:
             [awesome]
 
-    agwallet-pgadmin:
-            container_name: agwallet-pgadmin
+    sample-pgadmin:
+            container_name: sample-pgadmin
             image: dpage/pgadmin4:4.18
             restart: always
             environment:
@@ -61,7 +61,7 @@ services:
             volumes:
                 - pgadmin-data:/var/lib/pgadmin
             depends_on:
-                - agwallet-postgres
+                - sample-postgres
             networks:
                 [awesome]
             
