@@ -1,6 +1,6 @@
 import {baseUrl, UserRoutes} from '../../routes/constants'
 import {
-    errors, createBadResponse
+    errors, createBadResponse, createSuccessResponse
 } from '../helpers'
 import {db} from '../../models/index'
 import {LimitedAccessView} from '../LimitedAccessView'
@@ -37,7 +37,9 @@ export class UserAPI extends LimitedAccessView {
 
             const users = await User.findAll()
 
-            res.status(200).send(users.map((user: any) => UserAPI.getData(user)))
+            res.status(200).send(createSuccessResponse(
+                users.map((user: any) => UserAPI.getData(user))
+            ))
         } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
@@ -63,7 +65,9 @@ export class UserAPI extends LimitedAccessView {
                 )
                 return
             }
-            res.status(200).send(UserAPI.getData(user))
+            res.status(200).send(
+                createSuccessResponse(UserAPI.getData(user))
+            )
         } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
