@@ -1,12 +1,30 @@
+import {baseUrl, UserRoutes} from '../../routes/constants'
 import {
     errors, createBadResponse
 } from '../helpers'
 import {db} from '../../models/index'
 import {LimitedAccessView} from '../LimitedAccessView'
+import {apiVersion} from '../config'
 
 const User = db.users
 
 export class UserAPI extends LimitedAccessView {
+    static getData = (user:any, minimal = null) => {
+        const responseObject: any = {}
+        responseObject.type = 'users'
+        responseObject.id = user.id
+        responseObject.links = {
+            self: `${baseUrl + apiVersion + UserRoutes.baseUserRoute}/${user.id}`
+        }
+        if (!minimal) {
+            responseObject.attributes = {
+                email: user.email,
+                admin: user.admin
+            }
+        }
+        return responseObject
+    }
+
     getAll = async (req: any, res: any) => {
         try {
             const status = await UserAPI.limitAccess(req)
@@ -19,14 +37,7 @@ export class UserAPI extends LimitedAccessView {
 
             const users = await User.findAll()
 
-            if (!users) {
-                res.status(500).send(
-                    createBadResponse(errors.INTERNAL_ERROR)
-                )
-                return
-            }
-
-            res.status(200).send(users)
+            res.status(200).send(users.map((user: any) => UserAPI.getData(user)))
         } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
@@ -52,7 +63,7 @@ export class UserAPI extends LimitedAccessView {
                 )
                 return
             }
-            res.status(200).send(user)
+            res.status(200).send(UserAPI.getData(user))
         } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
