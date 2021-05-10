@@ -17,11 +17,11 @@ npm install
 
 Create the database container
 ```
-docker-compose up --build -d agwallet-postgres
+docker-compose up --build -d sample-postgres
 ```
 Create the test database container
 ```
-docker-compose up --build -d agwallet-postgres-test
+docker-compose up --build -d sample-postgres-test
 ```
 
 Start the app
