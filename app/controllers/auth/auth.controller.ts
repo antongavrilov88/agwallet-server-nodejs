@@ -8,6 +8,7 @@ import {db} from '../../models/index'
 import {signInDataRules, signUpDataRules} from './requestDataRules'
 import {LimitedAccessView} from '../LimitedAccessView'
 import {apiVersion} from '../config'
+import {isSignUpData} from './types'
 
 const bcrypt = require('bcrypt')
 
@@ -19,7 +20,7 @@ export class AuthAPI extends LimitedAccessView {
         try {
             const validation = new Validator(req, signUpDataRules)
 
-            if (validation.fails()) {
+            if (validation.fails() || !isSignUpData(req)) {
                 res.status(400).send(
                     createBadResponse(errors.WRONG_API)
                 )
