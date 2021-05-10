@@ -25,7 +25,7 @@ export class UserAPI extends LimitedAccessView {
         return responseObject
     }
 
-    getAll = async (req: any, res: any) => {
+    get = async (req: any, res: any) => {
         try {
             const status = await UserAPI.limitAccess(req)
             if (!status) {
@@ -33,41 +33,28 @@ export class UserAPI extends LimitedAccessView {
                     createBadResponse(errors.TOKEN_NOT_PROVIDED)
                 )
                 return
-            }
-
-            const users = await User.findAll()
-
-            res.status(200).send(createSuccessResponse(
-                users.map((user: any) => UserAPI.getData(user))
-            ))
-        } catch (err) {
-            res.status(500).send(
-                createBadResponse(errors.INTERNAL_ERROR)
-            )
-        }
-    }
-
-    getOne = async (req: any, res: any) => {
-        try {
-            const status = await UserAPI.limitAccess(req)
-            if (!status) {
-                res.status(401).send(
-                    createBadResponse(errors.TOKEN_NOT_PROVIDED)
-                )
             }
 
             const {id} = req.params
 
-            const user = await User.findOne({where: {id}})
-            if (user === null) {
-                res.status(404).send(
-                    createBadResponse(errors.USER_NOT_FOUND)
+            if (!id) {
+                const users = await User.findAll()
+
+                res.status(200).send(createSuccessResponse(
+                    users.map((user: any) => UserAPI.getData(user))
+                ))
+            } else {
+                const user = await User.findOne({where: {id}})
+                if (user === null) {
+                    res.status(404).send(
+                        createBadResponse(errors.USER_NOT_FOUND)
+                    )
+                    return
+                }
+                res.status(200).send(
+                    createSuccessResponse(UserAPI.getData(user))
                 )
-                return
             }
-            res.status(200).send(
-                createSuccessResponse(UserAPI.getData(user))
-            )
         } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)

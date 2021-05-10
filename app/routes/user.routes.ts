@@ -8,9 +8,9 @@ export const userRoutes = (app: any) => {
 
     const userAPI = new UserAPI()
 
-    router.get(UserRoutes.root, userAPI.getAll)
+    router.get(UserRoutes.root, userAPI.get)
 
-    router.get(UserRoutes.userId, userAPI.getOne)
+    router.get(UserRoutes.userId, userAPI.get)
 
     app.use(baseUrl + apiVersion + UserRoutes.baseUserRoute, router)
 }
