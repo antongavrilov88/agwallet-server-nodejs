@@ -1,14 +1,17 @@
+import {apiVersion} from '../controllers/config'
+
 export const baseUrl = '/api/'
 
 export enum UserRoutes {
-    baseUserRoute = '/users',
-    root = '/',
-    userId = '/:id'
+    root = '/users/',
+    userId = '/users/:id'
 }
 
 export enum AuthRoutes {
-    baseAuthRoute = '/auth',
-    signUp = '/signup',
-    signIn = '/signin',
-    signOut = '/signout'
+    root = '/auth/',
+    signUp = '/auth/signup',
+    signIn = '/auth/signin',
+    signOut = '/auth/signout'
 }
+
+export const createURL = (api: string, entityId = '') => `${baseUrl + apiVersion + api + entityId}`

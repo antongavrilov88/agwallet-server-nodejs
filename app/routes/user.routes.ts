@@ -12,5 +12,5 @@ export const userRoutes = (app: any) => {
 
     router.get(UserRoutes.userId, userAPI.get)
 
-    app.use(baseUrl + apiVersion + UserRoutes.baseUserRoute, router)
+    app.use(baseUrl + apiVersion, router)
 }

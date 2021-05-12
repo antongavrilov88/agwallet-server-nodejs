@@ -1,10 +1,9 @@
-import {baseUrl, UserRoutes} from '../../routes/constants'
+import {createURL, UserRoutes} from '../../routes/constants'
 import {
     errors, createBadResponse, createSuccessResponse
 } from '../helpers'
 import {db} from '../../models/index'
 import {LimitedAccessView} from '../LimitedAccessView'
-import {apiVersion} from '../config'
 
 const User = db.users
 
@@ -14,7 +13,7 @@ export class UserAPI extends LimitedAccessView {
         responseObject.type = 'users'
         responseObject.id = user.id
         responseObject.links = {
-            self: `${baseUrl + apiVersion + UserRoutes.baseUserRoute}/${user.id}`
+            self: createURL(UserRoutes.root, user.id)
         }
         if (!minimal) {
             responseObject.attributes = {
