@@ -67,6 +67,7 @@ export class AuthAPI extends LimitedAccessView {
 
             const responseObject = {
                 type: 'auth',
+                id: newUser.id,
                 attributes: {
                     token: newToken.token
                 },
