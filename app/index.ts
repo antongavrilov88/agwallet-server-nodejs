@@ -1,6 +1,6 @@
 import {app} from './app'
 import {db} from './models/index'
-import {router} from './routes/index.routes'
+import {router} from './routes'
 
 db.sequelize.sync().then(() => {
 })

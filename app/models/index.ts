@@ -6,7 +6,6 @@ const Sequelize = require('sequelize')
 
 export const db:any = {}
 
-db.Sequelize = Sequelize
 db.sequelize = sequelize
 
 db.users = userModel(sequelize, Sequelize)
