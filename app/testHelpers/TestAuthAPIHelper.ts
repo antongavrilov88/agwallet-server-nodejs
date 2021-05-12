@@ -1,12 +1,11 @@
-import {apiVersion} from '../controllers/config'
-import {baseUrl, AuthRoutes} from '../routes/constants'
+import {AuthRoutes, createURL} from '../routes/constants'
 import {TestAPIHelper} from './TestAPIHelper'
 
 export class TestAuthAPIHelper extends TestAPIHelper {
     static createUser = async (signUpData: any) => {
         const newUser = TestAPIHelper.request.post(
             signUpData,
-            baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signUp
+            createURL(AuthRoutes.signUp)
         )
         return newUser
     }
@@ -14,7 +13,7 @@ export class TestAuthAPIHelper extends TestAPIHelper {
     static signInUser = async (signInData: any) => {
         const newAuth = TestAPIHelper.request.post(
             signInData,
-            baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signIn
+            createURL(AuthRoutes.signIn)
         )
         return newAuth
     }
@@ -22,7 +21,7 @@ export class TestAuthAPIHelper extends TestAPIHelper {
     static signOut = async (token: any) => {
         const signOutResponse = TestAPIHelper.request.delete(
             {},
-            baseUrl + apiVersion + AuthRoutes.baseAuthRoute + AuthRoutes.signOut,
+            createURL(AuthRoutes.signOut),
             token
         )
         return signOutResponse
