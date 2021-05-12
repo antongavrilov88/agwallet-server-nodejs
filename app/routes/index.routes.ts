@@ -8,5 +8,4 @@ const routes = [
 
 export const router = (app: any) => {
     routes.map(route => route(app))
-    return app
 }
