@@ -1,14 +1,12 @@
 import {app} from '../../app'
 import {db} from '../../models/index'
-import {userRoutes} from '../../routes/user.routes'
-import {authRoutes} from '../../routes/auth.routes'
 import {TestAuthAPIHelper} from '../../testHelpers/TestAuthAPIHelper'
 import {
     signInUser, signInUserWrongPassword, signUpUser
 } from '../../testHelpers/TestRequestObjects'
+import {router} from '../../routes/index'
 
-userRoutes(app)
-authRoutes(app)
+router(app)
 
 beforeEach(async (done) => {
     await db.sequelize.sync({force: true}).then(() => {
