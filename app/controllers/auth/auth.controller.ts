@@ -35,7 +35,7 @@ export class AuthAPI extends LimitedAccessView {
 
             const hashPassword = bcrypt.hashSync(req.body.data.attributes.password, 10)
 
-            const users = await User.findAll()
+            const users = await User.count()
 
             const user = {
                 email: req.body.data.attributes.email,
