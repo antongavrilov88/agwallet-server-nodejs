@@ -2,10 +2,8 @@ import {createURL, UserRoutes} from '../../routes/constants'
 import {
     errors, createBadResponse, createSuccessResponse
 } from '../helpers'
-import {db} from '../../models/index'
+import {User} from '../../models/index'
 import {LimitedAccessView} from '../LimitedAccessView'
-
-const User = db.users
 
 export class UserAPI extends LimitedAccessView {
     static getData = (user:any, minimal = null) => {

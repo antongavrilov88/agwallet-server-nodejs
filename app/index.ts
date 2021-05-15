@@ -1,8 +1,8 @@
 import {app} from './app'
-import {db} from './models/index'
-import {router} from './routes'
+import {sequelize} from './config/db.config'
+import {router} from './routes/index'
 
-db.sequelize.sync().then(() => {
+sequelize.sync().then(() => {
 })
 
 router(app)

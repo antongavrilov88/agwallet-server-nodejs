@@ -1,44 +1,100 @@
-/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable max-classes-per-file */
+import {
+    Model,
+    // ModelDefined,
+    DataTypes,
+    // HasManyGetAssociationsMixin,
+    // HasManyAddAssociationMixin,
+    // HasManyHasAssociationMixin,
+    // Association,
+    // HasManyCountAssociationsMixin,
+    // HasManyCreateAssociationMixin,
+    Optional
+} from 'sequelize'
 import {sequelize} from '../config/db.config'
 
-const Sequelize = require('sequelize')
+interface TokenAttributes {
+    id: number
+    token: string
+    userId: number
+}
 
-export const tokenModel = (sequelize: any, Sequelize: any) => {
-    const Token = sequelize.define('tokens', {
+interface TokenCreationAttributes extends Optional<TokenAttributes, 'id'> {}
+
+export class Token extends Model<TokenAttributes, TokenCreationAttributes>
+    implements TokenAttributes {
+    public id!: number
+    public token!: string
+    public userId!: number
+
+    public readonly createdAt!: Date
+    public readonly updatedAt!: Date
+}
+
+Token.init(
+    {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true
+        },
         token: {
-            type: Sequelize.STRING,
+            type: new DataTypes.STRING(256),
             allowNull: false
         },
         userId: {
-            type: Sequelize.INTEGER,
+            type: DataTypes.INTEGER,
             allowNull: false
         }
-    })
-    return Token
+    },
+    {
+        tableName: 'tokens',
+        sequelize
+    }
+)
+
+interface UserAttributes {
+    id: number
+    email: string
+    password: string
+    admin: boolean
 }
 
-export const userModel = (sequelize: any, Sequelize: any) => {
-    const User = sequelize.define('users', {
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+
+export class User extends Model<UserAttributes, UserCreationAttributes>
+    implements UserAttributes {
+    public id!: number
+    public email!: string
+    public password!: string
+    public admin!: boolean
+
+    public readonly createdAt!: Date
+    public readonly updatedAt!: Date
+}
+
+User.init(
+    {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true
+        },
         email: {
-            type: Sequelize.STRING,
+            type: new DataTypes.STRING(256),
             allowNull: false
         },
         password: {
-            type: Sequelize.STRING,
+            type: new DataTypes.STRING(256),
             allowNull: false
         },
         admin: {
-            type: Sequelize.BOOLEAN,
+            type: DataTypes.BOOLEAN,
             allowNull: false
         }
-    })
-
-    return User
-}
-
-export const db:any = {}
-
-db.sequelize = sequelize
-
-db.users = userModel(sequelize, Sequelize)
-db.tokens = tokenModel(sequelize, Sequelize)
+    },
+    {
+        tableName: 'users',
+        sequelize
+    }
+)

@@ -1,11 +1,8 @@
-import {db} from '../models/index'
 import {apiVersion} from './config'
 import {
     DefaultObject, ErrorData, Error, ResponseData
 } from './types'
-
-const Token = db.tokens
-const User = db.users
+import {User, Token} from '../models/index'
 
 export const makeErrorObject = (code: string, title: string) => ({
     code,
@@ -66,8 +63,8 @@ export const checkUserStatus = async (token: any) => {
 }
 
 export const checkEmail = async (email: any) => {
-    const count = await User.findOne({where: {email}})
-    return count !== null
+    const count = await User.count({where: {email}})
+    return count !== 0
 }
 
 export class Auth {

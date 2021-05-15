@@ -1,5 +1,5 @@
 import {app} from '../../app'
-import {db} from '../../models/index'
+import {sequelize} from '../../config/db.config'
 import {TestAuthAPIHelper} from '../../testHelpers/TestAuthAPIHelper'
 import {
     signInUser, signInUserWrongPassword, signUpUser
@@ -9,7 +9,7 @@ import {router} from '../../routes/index'
 router(app)
 
 beforeEach(async (done) => {
-    await db.sequelize.sync({force: true}).then(() => {
+    await sequelize.sync({force: true}).then(() => {
     })
     done()
 })

@@ -4,15 +4,12 @@ import {AuthRoutes, createURL} from '../../routes/constants'
 import {
     errors, createBadResponse, createSuccessResponse, checkEmail
 } from '../helpers'
-import {db} from '../../models/index'
 import {signInDataRules, signUpDataRules} from './requestDataRules'
 import {LimitedAccessView} from '../LimitedAccessView'
 import {isSignUpData} from './types'
+import {User, Token} from '../../models/index'
 
 const bcrypt = require('bcrypt')
-
-const User = db.users
-const Token = db.tokens
 
 export class AuthAPI extends LimitedAccessView {
     signUp = async (req: any, res: any) => {
@@ -40,7 +37,7 @@ export class AuthAPI extends LimitedAccessView {
             const user = {
                 email: req.body.data.attributes.email,
                 password: hashPassword,
-                admin: users.length === 0
+                admin: users === 0
             }
 
             const newUser = await User.create(user)
@@ -52,11 +49,11 @@ export class AuthAPI extends LimitedAccessView {
                 return
             }
 
-            const token = {
+            const tokenToCreate = {
                 userId: newUser.id,
                 token: suid(16)
             }
-            const newToken = await Token.create(token)
+            const newToken = await Token.create(tokenToCreate)
 
             if (!newToken) {
                 res.status(500).send(
@@ -187,7 +184,7 @@ export class AuthAPI extends LimitedAccessView {
             res.status(200).send(
                 createSuccessResponse(responseObject)
             )
-        } catch (error) {
+        } catch (err) {
             res.status(500).send(
                 createBadResponse(errors.INTERNAL_ERROR)
             )
