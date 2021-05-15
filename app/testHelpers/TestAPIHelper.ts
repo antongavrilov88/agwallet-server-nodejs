@@ -23,6 +23,24 @@ export class TestAPIHelper {
             }
             return res
         },
+        get: async (data: any, url: any, token: any = null) => {
+            let res
+            if (token) {
+                res = await request(app)
+                    .get(url)
+                    .send()
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .then((response: any) => response)
+            } else {
+                res = await request(app)
+                    .get(url)
+                    .send()
+                    .set('Accept', 'application/json')
+                    .then((response: any) => response)
+            }
+            return res
+        },
         delete: async (data: any, url: any, token: any = null) => {
             let res
             if (token) {
