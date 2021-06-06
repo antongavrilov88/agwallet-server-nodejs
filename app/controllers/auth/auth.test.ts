@@ -16,7 +16,7 @@ beforeEach(async (done) => {
 
 describe('Auth API tests', () => {
     it('Should return 201 response status and token to signup request with valid data', async (done) => {
-        const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
+        const newUser: any = await TestAuthAPIHelper.createUser(JSON.stringify(signUpUser))
 
         expect(newUser.status).toEqual(201)
         expect(JSON.parse(newUser.text).data.type).toEqual('auth')

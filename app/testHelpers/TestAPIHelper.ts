@@ -12,6 +12,7 @@ export class TestAPIHelper {
                     .post(url)
                     .send(data)
                     .set('Authorization', `Bearer ${token}`)
+                    .set('Content-Type', 'application/json')
                     .set('Accept', 'application/json')
                     .then((response: any) => response)
             } else {
@@ -19,11 +20,12 @@ export class TestAPIHelper {
                     .post(url)
                     .send(data)
                     .set('Accept', 'application/json')
+                    .set('Content-Type', 'application/json')
                     .then((response: any) => response)
             }
             return res
         },
-        get: async (data: any, url: any, token: any = null) => {
+        get: async (url: any, token: any = null) => {
             let res
             if (token) {
                 res = await request(app)

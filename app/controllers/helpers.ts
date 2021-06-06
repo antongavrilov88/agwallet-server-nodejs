@@ -1,57 +1,6 @@
-import {apiVersion} from './config'
-import {
-    DefaultObject, ErrorData, Error, ResponseData
-} from './types'
-import {User, Token} from '../models/index'
-
-export const makeErrorObject = (code: string, title: string) => ({
-    code,
-    title
-})
-
-export const errors: Record<any, Error> = {
-    WRONG_API: makeErrorObject('WrongAPI', 'Wrong API'),
-    AUTH_CONFLICT: makeErrorObject('UserAlreadyInSystem', 'User already in system'),
-    INTERNAL_ERROR: makeErrorObject('InternalError', 'Something went wrong'),
-    UNAUTHORIZED: makeErrorObject('Unauthorized', 'Unauthorized'),
-    NOT_FOUND: makeErrorObject('NotFound', 'Not found'),
-    FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
-    TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
-    USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
-    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
-    WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password')
-}
-
-export const defaultResponseObject = () => ({
-    jsonapi: {
-        version: apiVersion
-    },
-    meta: {
-        copyright: 'Anton Gavrilov',
-        authors: [
-            'Anton Gavrilov'
-        ]
-    }
-})
-
-export const errorResponseObject = (error: Error) => {
-    const responseObject: DefaultObject<ErrorData> = defaultResponseObject()
-    responseObject.errors = [{
-        code: error.code,
-        title: error.title
-    }]
-    return responseObject
-}
-
-export const successResponseObject = (data: ResponseData) => {
-    const responseObject: DefaultObject<ResponseData> = defaultResponseObject()
-    responseObject.data = data
-    return responseObject
-}
-
-export const createSuccessResponse = (data: any) => successResponseObject(data)
-
-export const createBadResponse = (error: Error) => errorResponseObject(error)
+import {User} from '../models/User.model'
+import {Token} from '../models/Token.model'
+import {errors} from './responseHelpers'
 
 export const checkUserStatus = async (token: any) => {
     const status = Token.findOne({where: {token}})
@@ -60,11 +9,6 @@ export const checkUserStatus = async (token: any) => {
         .catch((_err: {message: any}) => {
         })
     return await status
-}
-
-export const checkEmail = async (email: any) => {
-    const count = await User.count({where: {email}})
-    return count !== 0
 }
 
 export class Auth {
@@ -89,4 +33,9 @@ export class Auth {
         }
         return false
     }
+}
+
+export const checkEmail = async (email: any) => {
+    const count = await User.findOne({where: {email}})
+    return count !== null
 }
