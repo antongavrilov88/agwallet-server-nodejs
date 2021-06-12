@@ -1,9 +1,10 @@
-import {suid} from 'rand-token'
 import {
     Model,
     DataTypes,
     Optional
 } from 'sequelize'
+import {suid} from 'rand-token'
+import {errors, Error} from '../controllers/responseHelpers'
 import {sequelize} from '../config/db.config'
 
 interface TokenAttributes {
@@ -23,13 +24,15 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
     public readonly createdAt!: Date
     public readonly updatedAt!: Date
 
-    public static add = async (userId: any) => {
-        const token = {
+    public static async add(userId: unknown): Promise<Token | Error> {
+        if (typeof userId !== 'number') {
+            return errors.WRONG_API
+        }
+        const tokenObj: TokenCreationAttributes = {
             userId,
             token: suid(16)
         }
-        const newToken = await Token.create(token)
-
+        const newToken: Token = await Token.create(tokenObj)
         return newToken
     }
 }

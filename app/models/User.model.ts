@@ -5,11 +5,9 @@ import {
     Optional
 } from 'sequelize'
 import Validator from 'validatorjs'
-import {signInDataRules} from './requestDataRules'
+import {signUpDataRules} from './requestDataRules'
 import {sequelize} from '../config/db.config'
-import {createBadRequestResponse, createUserConflictResponse} from '../controllers/responseHelpers'
-
-const bcrypt = require('bcrypt')
+import {Error, errors} from '../controllers/responseHelpers'
 
 export interface UserAttributes {
     id: number
@@ -30,34 +28,22 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
     public readonly createdAt!: Date
     public readonly updatedAt!: Date
 
-    public static add = async (rawUserData: any) => {
-        const validation = new Validator(rawUserData, signInDataRules)
-
-        if (validation.fails()) {
-            return createBadRequestResponse()
+    public static async add(req: unknown): Promise<User | Error> {
+        try {
+            const isSignUpData = (obj: unknown): obj is UserCreationAttributes => {
+                const validation = new Validator(obj, signUpDataRules)
+                return !validation.fails()
+            }
+            if (!isSignUpData(req)) {
+                return errors.WRONG_API
+            }
+            console.log('TUUUUUUUUT')
+            const newUser: User = await User.create(req)
+            return newUser
+        } catch (err) {
+            console.log(err)
+            return err
         }
-
-        const isEmailUsed = await User.findOne({
-            where: {email: rawUserData.body.data.attributes.email}
-        })
-
-        if (isEmailUsed !== null) {
-            return createUserConflictResponse()
-        }
-
-        const hashPassword = bcrypt.hashSync(rawUserData.body.data.attributes.password, 10)
-
-        const users = await User.count()
-
-        const newUserData = {
-            email: rawUserData.body.data.attributes.email,
-            password: hashPassword,
-            admin: users === 0
-        }
-
-        const newUser = User.create(newUserData)
-
-        return newUser
     }
 }
 

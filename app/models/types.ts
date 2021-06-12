@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+
 export type SignUpData = {
     body: {
         data: {
@@ -9,5 +11,3 @@ export type SignUpData = {
         }
     }
 }
-
-export const isSignUpData = (obj: SignUpData) => obj.body.data.type === 'auth'

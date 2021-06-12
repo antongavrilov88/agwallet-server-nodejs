@@ -1,12 +1,30 @@
 import {apiVersion} from './config'
-import {
-    DefaultObject, Error, ResponseData
-} from './types'
 
 export const makeErrorObject = (code: string, title: string) => ({
     code,
     title
 })
+
+export type DefaultObject<U> = {
+    jsonapi: {
+        version: string
+    },
+    meta: {
+        copyright: string,
+        authors: string[]
+    },
+    errors?: U,
+    data?: U
+}
+
+export type Error = {
+    code: string,
+    title: string
+}
+
+export type ErrorData = Error[]
+
+export type ResponseData = any
 
 export const errors: Record<any, Error> = {
     WRONG_API: makeErrorObject('WrongAPI', 'Wrong API'),
@@ -20,6 +38,13 @@ export const errors: Record<any, Error> = {
     USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
     WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password')
 }
+
+export const isErrorResponse = (obj: unknown): obj is Error => (
+    typeof obj === 'object'
+        && obj !== null
+        && 'code' in obj
+        && 'title' in obj
+)
 
 export const defaultResponseObject = () => ({
     jsonapi: {
@@ -72,3 +97,5 @@ export const createInternalErrorResponse = () => createErrorData(500, errors.INT
 export const createUnauthorizedResponse = () => createErrorData(401, errors.UNAUTHORIZED)
 
 export const createUserConflictResponse = () => createErrorData(409, errors.USER_CONFLICT)
+
+export const createNotFoundResponse = () => createErrorData(400, errors.NOT_FOUND);
