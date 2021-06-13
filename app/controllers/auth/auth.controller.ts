@@ -8,6 +8,7 @@ import {
     isErrorResponse
 } from '../responseHelpers'
 import {Token} from '../../models/Token.model'
+import {Auth} from '../helpers'
 
 export class AuthAPI extends LimitedAccessView {
     signUp = async (req: unknown, res: any) => {
@@ -36,6 +37,39 @@ export class AuthAPI extends LimitedAccessView {
             }
 
             res.status(201).send(createSuccessResponse(responseObject))
+        } catch (err) {
+            const error = JSON.parse(err.message)
+            res.status(error.status).send(
+                createErrorResponse(error.message)
+            )
+        }
+    }
+    signIn = async (req: unknown, res: any) => {
+        try {
+            const userResponse: User | ErrorData = await Auth.getSigningInUserData(req)
+
+            if (isErrorResponse(userResponse)) {
+                throw new Error(JSON.stringify(userResponse))
+            }
+
+            const userId = userResponse.id
+
+            const newTokenResponse: Token | ErrorData = await Token.add(userId)
+
+            if (isErrorResponse(newTokenResponse)) {
+                throw new Error(JSON.stringify(newTokenResponse))
+            }
+
+            const responseObject = {
+                type: 'auth',
+                attributes: {
+                    token: newTokenResponse.token
+                },
+                links: {
+                    self: createURL(AuthRoutes.signIn)
+                }
+            }
+            res.status(200).send(createSuccessResponse(responseObject))
         } catch (err) {
             const error = JSON.parse(err.message)
             res.status(error.status).send(

@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import Validator from 'validatorjs'
 import {User} from '../models/User.model'
 import {Token} from '../models/Token.model'
+import {createBadRequestResponse, createNotFoundResponse, ErrorData} from './responseHelpers'
+import {signInDataRules} from './auth/requestDataRules'
+import {SignInData} from './auth/types'
 
 type Nullable<T> = T | null
 
@@ -13,7 +17,7 @@ export const checkUserStatus = async (token: string): Promise<Nullable<Token>> =
 }
 
 export class Auth {
-    static async status(header: string) {
+    static async status(header: string): Promise<boolean> {
         let token: Nullable<string> = ''
         if (!header) {
             return false
@@ -27,6 +31,27 @@ export class Auth {
             .then((response: number) => response > 0)
 
         return isTokenPresent
+    }
+
+    static async getSigningInUserData(req: unknown): Promise<User | ErrorData> {
+        const isSignInData = (obj: unknown): obj is SignInData => {
+            const validation = new Validator(obj, signInDataRules)
+            return !validation.fails()
+        }
+
+        if (!isSignInData(req)) {
+            return createBadRequestResponse()
+        }
+
+        const user: Nullable<User> = await User.findOne({
+            where: {email: req.body.data.attributes.email}
+        })
+
+        if (user === null) {
+            return createNotFoundResponse()
+        }
+
+        return user
     }
 }
 

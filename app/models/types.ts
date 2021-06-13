@@ -1,5 +1,3 @@
-/* eslint-disable global-require */
-
 export type SignUpData = {
     body: {
         data: {

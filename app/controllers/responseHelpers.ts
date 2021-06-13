@@ -101,6 +101,6 @@ export const createUnauthorizedResponse = () => createErrorData(401, errors.UNAU
 
 export const createUserConflictResponse = () => createErrorData(409, errors.USER_CONFLICT)
 
-export const createNotFoundResponse = () => createErrorData(400, errors.NOT_FOUND);
+export const createNotFoundResponse = () => createErrorData(404, errors.NOT_FOUND);
 
 export const createNoUserIdResponse = () => createErrorData(400, errors.USER_ID_NOT_PROVIDED)
