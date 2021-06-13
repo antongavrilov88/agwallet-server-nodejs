@@ -12,7 +12,7 @@ import {Token} from '../../models/Token.model'
 export class AuthAPI extends LimitedAccessView {
     signUp = async (req: any, res: any) => {
         try {
-            const newUserResponse: User | Error = await User.add(req.body)
+            const newUserResponse: User | Error = await User.add(req)
 
             if (isErrorResponse(newUserResponse)) {
                 throw new Error(JSON.stringify(newUserResponse))
@@ -42,36 +42,4 @@ export class AuthAPI extends LimitedAccessView {
             )
         }
     }
-
-    // signIn = async (req: any, res: any) => {
-    //     try {
-    //         const isUser: any = await User.isUserExists(req.body.data.attributes.email)
-    //         if ('code' in isUser) {
-    //             throw new Error(JSON.stringify(isUser))
-    //         }
-
-    //         const newToken = await Token.add(isUser.id)
-    //         if ('code' in newToken) {
-    //             throw new Error(JSON.stringify(newToken))
-    //         }
-
-    //         const responseObject = {
-    //             type: 'auth',
-    //             attributes: {
-    //                 token: newToken.token
-    //             },
-    //             links: {
-    //                 self: createURL(AuthRoutes.signIn)
-    //             }
-    //         }
-
-    //         res.status(201).send(createSuccessResponse(responseObject))
-    //     } catch (err) {
-    //         const errObject = JSON.parse(err.message)
-
-    //         res.status(errObject.code).send(
-    //             createErrorResponse(errObject.message)
-    //         )
-    //     }
-    // }
 }

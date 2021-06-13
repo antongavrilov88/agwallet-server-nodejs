@@ -36,7 +36,8 @@ export const errors: Record<any, Error> = {
     TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
     USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
     USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
-    WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password')
+    WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password'),
+    USER_ID_NOT_PROVIDED: makeErrorObject('UserIdNotProvided', 'User id not provided')
 }
 
 export const isErrorResponse = (obj: unknown): obj is Error => (

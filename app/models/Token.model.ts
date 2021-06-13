@@ -26,7 +26,7 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
 
     public static async add(userId: unknown): Promise<Token | Error> {
         if (typeof userId !== 'number') {
-            return errors.WRONG_API
+            return errors.USER_ID_NOT_PROVIDED
         }
         const tokenObj: TokenCreationAttributes = {
             userId,

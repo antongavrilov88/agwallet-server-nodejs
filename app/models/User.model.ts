@@ -8,6 +8,9 @@ import Validator from 'validatorjs'
 import {signUpDataRules} from './requestDataRules'
 import {sequelize} from '../config/db.config'
 import {Error, errors} from '../controllers/responseHelpers'
+import {SignUpData} from './types'
+
+const bcrypt = require('bcrypt')
 
 export interface UserAttributes {
     id: number
@@ -29,14 +32,25 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
     public readonly updatedAt!: Date
 
     public static async add(req: unknown): Promise<User | Error> {
-        const isSignUpData = (obj: unknown): obj is UserCreationAttributes => {
+        const isSignUpData = (obj: unknown): obj is SignUpData => {
             const validation = new Validator(obj, signUpDataRules)
             return !validation.fails()
         }
         if (!isSignUpData(req)) {
             return errors.WRONG_API
         }
-        const newUser: User = await User.create(req)
+
+        const countUsers: number = await User.count()
+
+        const hashPassword: string = bcrypt.hashSync(req.body.data.attributes.password, 10)
+
+        const userCreationObject: UserCreationAttributes = {
+            email: req.body.data.attributes.email,
+            password: hashPassword,
+            admin: countUsers === 0
+        }
+
+        const newUser: User = await User.create(userCreationObject)
         return newUser
     }
 }
