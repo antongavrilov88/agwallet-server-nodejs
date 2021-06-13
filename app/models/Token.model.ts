@@ -4,7 +4,7 @@ import {
     Optional
 } from 'sequelize'
 import {suid} from 'rand-token'
-import {errors, Error} from '../controllers/responseHelpers'
+import {ErrorData, createNoUserIdResponse} from '../controllers/responseHelpers'
 import {sequelize} from '../config/db.config'
 
 interface TokenAttributes {
@@ -24,9 +24,9 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
     public readonly createdAt!: Date
     public readonly updatedAt!: Date
 
-    public static async add(userId: unknown): Promise<Token | Error> {
+    public static async add(userId: unknown): Promise<Token | ErrorData> {
         if (typeof userId !== 'number') {
-            return errors.USER_ID_NOT_PROVIDED
+            return createNoUserIdResponse()
         }
         const tokenObj: TokenCreationAttributes = {
             userId,

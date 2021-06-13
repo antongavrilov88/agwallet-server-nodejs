@@ -7,7 +7,7 @@ import {
 import Validator from 'validatorjs'
 import {signUpDataRules} from './requestDataRules'
 import {sequelize} from '../config/db.config'
-import {Error, errors} from '../controllers/responseHelpers'
+import {createBadRequestResponse, ErrorData} from '../controllers/responseHelpers'
 import {SignUpData} from './types'
 
 const bcrypt = require('bcrypt')
@@ -31,14 +31,14 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
     public readonly createdAt!: Date
     public readonly updatedAt!: Date
 
-    public static async add(req: unknown): Promise<User | Error> {
+    public static async add(req: unknown): Promise<User | ErrorData> {
         const isSignUpData = (obj: unknown): obj is SignUpData => {
             const validation = new Validator(obj, signUpDataRules)
             return !validation.fails()
         }
 
         if (!isSignUpData(req)) {
-            return errors.WRONG_API
+            return createBadRequestResponse()
         }
 
         const countUsers: number = await User.count()

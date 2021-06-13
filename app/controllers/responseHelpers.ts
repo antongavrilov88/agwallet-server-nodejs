@@ -22,7 +22,7 @@ export type Error = {
     title: string
 }
 
-export type ErrorData = Error[]
+// export type ErrorData = Error[]
 
 export type ResponseData = any
 
@@ -40,11 +40,11 @@ export const errors: Record<any, Error> = {
     USER_ID_NOT_PROVIDED: makeErrorObject('UserIdNotProvided', 'User id not provided')
 }
 
-export const isErrorResponse = (obj: unknown): obj is Error => (
+export const isErrorResponse = (obj: unknown): obj is ErrorData => (
     typeof obj === 'object'
         && obj !== null
         && 'code' in obj
-        && 'title' in obj
+        && 'message' in obj
 )
 
 export const defaultResponseObject = () => ({
@@ -84,7 +84,12 @@ export const createErrorResponse = (error: Error) => {
     }
 }
 
-export const createErrorData = (code: number, message: any) => ({
+export type ErrorData = {
+    code: number,
+    message: Error
+}
+
+export const createErrorData = (code: number, message: Error): ErrorData => ({
     code,
     message
 })
@@ -100,3 +105,5 @@ export const createUnauthorizedResponse = () => createErrorData(401, errors.UNAU
 export const createUserConflictResponse = () => createErrorData(409, errors.USER_CONFLICT)
 
 export const createNotFoundResponse = () => createErrorData(400, errors.NOT_FOUND);
+
+export const createNoUserIdResponse = () => createErrorData(400, errors.USER_ID_NOT_PROVIDED)

@@ -4,21 +4,21 @@ import {LimitedAccessView} from '../LimitedAccessView'
 import {
     createErrorResponse,
     createSuccessResponse,
-    Error,
+    ErrorData,
     isErrorResponse
 } from '../responseHelpers'
 import {Token} from '../../models/Token.model'
 
 export class AuthAPI extends LimitedAccessView {
-    signUp = async (req: any, res: any) => {
+    signUp = async (req: unknown, res: any) => {
         try {
-            const newUserResponse: User | Error = await User.add(req)
+            const newUserResponse: User | ErrorData = await User.add(req)
 
             if (isErrorResponse(newUserResponse)) {
                 throw new Error(JSON.stringify(newUserResponse))
             }
 
-            const newTokenResponse: Token | Error = await Token.add(newUserResponse.id)
+            const newTokenResponse: Token | ErrorData = await Token.add(newUserResponse.id)
 
             if (isErrorResponse(newTokenResponse)) {
                 throw new Error(JSON.stringify(newTokenResponse))
@@ -37,8 +37,8 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
-            res.status(400).send(
-                createErrorResponse(JSON.parse(err.message))
+            res.status(JSON.parse(err.message).code).send(
+                createErrorResponse(JSON.parse(err.message).message)
             )
         }
     }
