@@ -104,3 +104,5 @@ export const createUserConflictResponse = () => createErrorData(409, errors.USER
 export const createNotFoundResponse = () => createErrorData(404, errors.NOT_FOUND);
 
 export const createNoUserIdResponse = () => createErrorData(400, errors.USER_ID_NOT_PROVIDED)
+
+export const createUserNotFoundResponse = () => createErrorData(404, errors.USER_NOT_FOUND)

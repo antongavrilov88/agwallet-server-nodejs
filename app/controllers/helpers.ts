@@ -2,7 +2,7 @@
 import Validator from 'validatorjs'
 import {User} from '../models/User.model'
 import {Token} from '../models/Token.model'
-import {createBadRequestResponse, createNotFoundResponse, ErrorData} from './responseHelpers'
+import {createBadRequestResponse, createUserNotFoundResponse, ErrorData} from './responseHelpers'
 import {signInDataRules} from './auth/requestDataRules'
 import {SignInData} from './auth/types'
 
@@ -48,7 +48,7 @@ export class Auth {
         })
 
         if (user === null) {
-            return createNotFoundResponse()
+            return createUserNotFoundResponse()
         }
 
         return user
