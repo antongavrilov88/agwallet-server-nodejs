@@ -35,6 +35,16 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
         const newToken: Token = await Token.create(tokenObj)
         return newToken
     }
+
+    public static async remove(userId: unknown): Promise<number | ErrorData> {
+        if (typeof userId !== 'number') {
+            return createNoUserIdResponse()
+        }
+
+        const tokenRemoved: number = await Token.destroy({where: {userId}})
+
+        return tokenRemoved
+    }
 }
 
 Token.init(

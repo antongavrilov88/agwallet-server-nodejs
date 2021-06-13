@@ -1,9 +1,11 @@
+import {User} from '../models/User.model'
 import {Auth} from './helpers'
+import {ErrorData} from './responseHelpers'
 
 export class LimitedAccessView {
-    static authStatus: boolean
-    static async isLimitedAccessGranted(token: string): Promise<boolean> {
-        this.authStatus = await Auth.status(token)
-        return this.authStatus
+    static authorizedUser: User | ErrorData
+    static async isLimitedAccessGranted(obj: unknown): Promise<User | ErrorData> {
+        this.authorizedUser = await Auth.getStatus(obj)
+        return this.authorizedUser
     }
 }

@@ -2,11 +2,23 @@
 import Validator from 'validatorjs'
 import {User} from '../models/User.model'
 import {Token} from '../models/Token.model'
-import {createBadRequestResponse, createUserNotFoundResponse, ErrorData} from './responseHelpers'
+import {
+    createBadRequestResponse,
+    createTokenNotProvidedResponse,
+    createUnauthorizedResponse,
+    createUserNotFoundResponse,
+    ErrorData
+} from './responseHelpers'
 import {signInDataRules} from './auth/requestDataRules'
 import {SignInData} from './auth/types'
 
 type Nullable<T> = T | null
+
+type RequestObjectWithHeader = {
+    headers: {
+        authorization: string
+    }
+}
 
 export const checkUserStatus = async (token: string): Promise<Nullable<Token>> => {
     const status: Nullable<Token> = await Token.findOne({where: {token}})
@@ -17,20 +29,39 @@ export const checkUserStatus = async (token: string): Promise<Nullable<Token>> =
 }
 
 export class Auth {
-    static async status(header: string): Promise<boolean> {
-        let token: Nullable<string> = ''
+    static async getStatus(obj: unknown): Promise<User | ErrorData> {
+        const isHeaderProvided = (value: unknown): value is RequestObjectWithHeader => (
+            // TODO complete typeGuard
+            typeof value === 'object'
+                && value !== null
+                && 'headers' in value
+        )
+
+        if (!isHeaderProvided(obj)) {
+            return createTokenNotProvidedResponse()
+        }
+        const header = obj.headers.authorization
         if (!header) {
-            return false
+            return createBadRequestResponse()
         }
         const authorization = header.split(' ')
         if (authorization.length !== 2) {
-            return false
+            return createBadRequestResponse()
         }
-        [,token] = authorization
-        const isTokenPresent = await Token.count({where: {token}})
-            .then((response: number) => response > 0)
+        const [,token] = authorization
+        const currentToken: Nullable<Token> = await Token.findOne({where: {token}})
 
-        return isTokenPresent
+        if (currentToken === null) {
+            return createUnauthorizedResponse()
+        }
+
+        const user: Nullable<User> = await User.findOne({where: {id: currentToken.userId}})
+
+        if (user === null) {
+            return createUserNotFoundResponse()
+        }
+
+        return user
     }
 
     static async getSigningInUserData(req: unknown): Promise<User | ErrorData> {

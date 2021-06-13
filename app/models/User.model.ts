@@ -7,7 +7,7 @@ import {
 import Validator from 'validatorjs'
 import {signUpDataRules} from './requestDataRules'
 import {sequelize} from '../config/db.config'
-import {createBadRequestResponse, ErrorData} from '../controllers/responseHelpers'
+import {createBadRequestResponse, createUserConflictResponse, ErrorData} from '../controllers/responseHelpers'
 import {SignUpData} from './types'
 
 const bcrypt = require('bcrypt')
@@ -39,6 +39,14 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
 
         if (!isSignUpData(req)) {
             return createBadRequestResponse()
+        }
+
+        const isUserAlredyExsists: number = await User.count({
+            where: {email: req.body.data.attributes.email}
+        })
+
+        if (isUserAlredyExsists !== 0) {
+            return createUserConflictResponse()
         }
 
         const countUsers: number = await User.count()

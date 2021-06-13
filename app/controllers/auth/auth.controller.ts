@@ -77,4 +77,24 @@ export class AuthAPI extends LimitedAccessView {
             )
         }
     }
+    signOut = async (req: unknown, res: any) => {
+        try {
+            // eslint-disable-next-line max-len
+            const authorizedUserResponse: User | ErrorData = await AuthAPI.isLimitedAccessGranted(req)
+
+            if (isErrorResponse(authorizedUserResponse)) {
+                throw new Error(JSON.stringify(authorizedUserResponse))
+            }
+            const userSignedOut: number | ErrorData = await Token.remove(authorizedUserResponse.id)
+            if (isErrorResponse(userSignedOut)) {
+                throw new Error(JSON.stringify(userSignedOut))
+            }
+            res.status(200).send(createSuccessResponse(null))
+        } catch (err) {
+            const error = JSON.parse(err.message)
+            res.status(error.status).send(
+                createErrorResponse(error.message)
+            )
+        }
+    }
 }

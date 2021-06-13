@@ -1,5 +1,7 @@
 import {apiVersion} from './config'
 
+export type Nullable<T> = T | null
+
 export type Error = {
     code: string,
     title: string
@@ -71,13 +73,15 @@ export const errorResponseObject = (error: Error) => {
     return responseObject
 }
 
-export const successResponseObject = (data: ResponseData) => {
-    const responseObject: DefaultObject<ResponseData> = defaultResponseObject()
-    responseObject.data = data
+export const successResponseObject = (data: Nullable<ResponseData>) => {
+    const responseObject: DefaultObject<Nullable<ResponseData>> = defaultResponseObject()
+    if (data !== null) {
+        responseObject.data = data
+    }
     return responseObject
 }
 
-export const createSuccessResponse = (data: any) => successResponseObject(data)
+export const createSuccessResponse = (data: Nullable<ResponseData>) => successResponseObject(data)
 
 export const createErrorResponse = (error: Error) => {
     const responseObject = errorResponseObject(error)
@@ -106,3 +110,5 @@ export const createNotFoundResponse = () => createErrorData(404, errors.NOT_FOUN
 export const createNoUserIdResponse = () => createErrorData(400, errors.USER_ID_NOT_PROVIDED)
 
 export const createUserNotFoundResponse = () => createErrorData(404, errors.USER_NOT_FOUND)
+
+export const createTokenNotProvidedResponse = () => createErrorData(400, errors.TOKEN_NOT_PROVIDED)
