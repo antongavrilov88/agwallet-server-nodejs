@@ -36,6 +36,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
             const validation = new Validator(obj, signUpDataRules)
             return !validation.fails()
         }
+
         if (!isSignUpData(req)) {
             return errors.WRONG_API
         }
