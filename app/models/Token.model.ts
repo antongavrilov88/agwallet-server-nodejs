@@ -4,7 +4,7 @@ import {
     Optional
 } from 'sequelize'
 import {suid} from 'rand-token'
-import {ErrorData, createNoUserIdResponse} from '../controllers/responseHelpers'
+import {createUserAlreadyInSystem, ErrorData} from '../controllers/responseHelpers'
 import {sequelize} from '../config/db.config'
 
 interface TokenAttributes {
@@ -24,10 +24,15 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
     public readonly createdAt!: Date
     public readonly updatedAt!: Date
 
-    public static async add(userId: unknown): Promise<Token | ErrorData> {
-        if (typeof userId !== 'number') {
-            return createNoUserIdResponse()
+    public static async add(userId: number): Promise<Token | ErrorData> {
+        const isUserAlreadyInSystem: number = await Token.count({
+            where: {userId}
+        })
+
+        if (isUserAlreadyInSystem !== 0) {
+            return createUserAlreadyInSystem()
         }
+
         const tokenObj: TokenCreationAttributes = {
             userId,
             token: suid(16)
@@ -36,11 +41,7 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
         return newToken
     }
 
-    public static async remove(userId: unknown): Promise<number | ErrorData> {
-        if (typeof userId !== 'number') {
-            return createNoUserIdResponse()
-        }
-
+    public static async remove(userId: number): Promise<number | ErrorData> {
         const tokenRemoved: number = await Token.destroy({where: {userId}})
 
         return tokenRemoved

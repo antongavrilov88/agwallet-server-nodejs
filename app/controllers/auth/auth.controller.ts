@@ -52,7 +52,7 @@ export class AuthAPI extends LimitedAccessView {
                 throw new Error(JSON.stringify(userResponse))
             }
 
-            const userId = userResponse.id
+            const userId: number = userResponse.id
 
             const newTokenResponse: Token | ErrorData = await Token.add(userId)
 
@@ -85,7 +85,11 @@ export class AuthAPI extends LimitedAccessView {
             if (isErrorResponse(authorizedUserResponse)) {
                 throw new Error(JSON.stringify(authorizedUserResponse))
             }
-            const userSignedOut: number | ErrorData = await Token.remove(authorizedUserResponse.id)
+
+            const userId: number = authorizedUserResponse.id
+
+            const userSignedOut: number | ErrorData = await Token.remove(userId)
+
             if (isErrorResponse(userSignedOut)) {
                 throw new Error(JSON.stringify(userSignedOut))
             }

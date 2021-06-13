@@ -42,7 +42,8 @@ export const errors: Record<any, Error> = {
     USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
     USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
     WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password'),
-    USER_ID_NOT_PROVIDED: makeErrorObject('UserIdNotProvided', 'User id not provided')
+    USER_ID_NOT_PROVIDED: makeErrorObject('UserIdNotProvided', 'User id not provided'),
+    USER_ALREADY_IN_SYSTEM: makeErrorObject('UserAlreadyInSystem', 'User is already in the system')
 }
 
 export const isErrorResponse = (obj: unknown): obj is ErrorData => (
@@ -112,3 +113,7 @@ export const createNoUserIdResponse = () => createErrorData(400, errors.USER_ID_
 export const createUserNotFoundResponse = () => createErrorData(404, errors.USER_NOT_FOUND)
 
 export const createTokenNotProvidedResponse = () => createErrorData(400, errors.TOKEN_NOT_PROVIDED)
+
+export const createWrongPasswordResponse = () => createErrorData(403, errors.WRONG_PASSWORD)
+
+export const createUserAlreadyInSystem = () => createErrorData(409, errors.USER_ALREADY_IN_SYSTEM)

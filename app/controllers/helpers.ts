@@ -7,10 +7,13 @@ import {
     createTokenNotProvidedResponse,
     createUnauthorizedResponse,
     createUserNotFoundResponse,
+    createWrongPasswordResponse,
     ErrorData
 } from './responseHelpers'
 import {signInDataRules} from './auth/requestDataRules'
 import {SignInData} from './auth/types'
+
+const bcrypt = require('bcrypt')
 
 type Nullable<T> = T | null
 
@@ -80,6 +83,14 @@ export class Auth {
 
         if (user === null) {
             return createUserNotFoundResponse()
+        }
+        const isPasswordValid = bcrypt.compareSync(
+            req.body.data.attributes.password,
+            user.password
+        )
+
+        if (!isPasswordValid) {
+            return createWrongPasswordResponse()
         }
 
         return user
