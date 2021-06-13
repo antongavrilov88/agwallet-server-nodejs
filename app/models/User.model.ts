@@ -29,21 +29,15 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
     public readonly updatedAt!: Date
 
     public static async add(req: unknown): Promise<User | Error> {
-        try {
-            const isSignUpData = (obj: unknown): obj is UserCreationAttributes => {
-                const validation = new Validator(obj, signUpDataRules)
-                return !validation.fails()
-            }
-            if (!isSignUpData(req)) {
-                return errors.WRONG_API
-            }
-            console.log('TUUUUUUUUT')
-            const newUser: User = await User.create(req)
-            return newUser
-        } catch (err) {
-            console.log(err)
-            return err
+        const isSignUpData = (obj: unknown): obj is UserCreationAttributes => {
+            const validation = new Validator(obj, signUpDataRules)
+            return !validation.fails()
         }
+        if (!isSignUpData(req)) {
+            return errors.WRONG_API
+        }
+        const newUser: User = await User.create(req)
+        return newUser
     }
 }
 
