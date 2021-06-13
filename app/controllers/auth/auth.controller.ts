@@ -37,8 +37,9 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
-            res.status(JSON.parse(err.message).code).send(
-                createErrorResponse(JSON.parse(err.message).message)
+            const error = JSON.parse(err.message)
+            res.status(error.code).send(
+                createErrorResponse(error.message)
             )
         }
     }
