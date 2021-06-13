@@ -1,9 +1,9 @@
 import {apiVersion} from './config'
 
-export const makeErrorObject = (code: string, title: string) => ({
-    code,
-    title
-})
+export type Error = {
+    code: string,
+    title: string
+}
 
 export type DefaultObject<U> = {
     jsonapi: {
@@ -17,14 +17,17 @@ export type DefaultObject<U> = {
     data?: U
 }
 
-export type Error = {
-    code: string,
-    title: string
+export type ErrorData = {
+    status: number,
+    message: Error
 }
 
-// export type ErrorData = Error[]
-
 export type ResponseData = any
+
+export const makeErrorObject = (code: string, title: string): Error => ({
+    code,
+    title
+})
 
 export const errors: Record<any, Error> = {
     WRONG_API: makeErrorObject('WrongAPI', 'Wrong API'),
@@ -43,7 +46,7 @@ export const errors: Record<any, Error> = {
 export const isErrorResponse = (obj: unknown): obj is ErrorData => (
     typeof obj === 'object'
         && obj !== null
-        && 'code' in obj
+        && 'status' in obj
         && 'message' in obj
 )
 
@@ -59,7 +62,7 @@ export const defaultResponseObject = () => ({
     }
 })
 
-export const errorResponseObject = (error: any) => {
+export const errorResponseObject = (error: Error) => {
     const responseObject: DefaultObject<Error> = defaultResponseObject()
     responseObject.errors = {
         code: error.code,
@@ -76,7 +79,6 @@ export const successResponseObject = (data: ResponseData) => {
 
 export const createSuccessResponse = (data: any) => successResponseObject(data)
 
-// eslint-disable-next-line max-len
 export const createErrorResponse = (error: Error) => {
     const responseObject = errorResponseObject(error)
     return {
@@ -84,13 +86,8 @@ export const createErrorResponse = (error: Error) => {
     }
 }
 
-export type ErrorData = {
-    code: number,
-    message: Error
-}
-
-export const createErrorData = (code: number, message: Error): ErrorData => ({
-    code,
+export const createErrorData = (status: number, message: Error): ErrorData => ({
+    status,
     message
 })
 
