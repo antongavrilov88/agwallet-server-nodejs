@@ -32,7 +32,7 @@ export const checkUserStatus = async (token: string): Promise<Nullable<Token>> =
 }
 
 export class Auth {
-    static async getStatus(obj: unknown): Promise<User | ErrorData> {
+    static async getAuthorizedUserData(obj: unknown): Promise<User | ErrorData> {
         const isHeaderProvided = (value: unknown): value is RequestObjectWithHeader => (
             // TODO complete typeGuard
             typeof value === 'object'

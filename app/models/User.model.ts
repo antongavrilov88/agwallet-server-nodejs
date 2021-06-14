@@ -7,10 +7,19 @@ import {
 import Validator from 'validatorjs'
 import {signUpDataRules} from './requestDataRules'
 import {sequelize} from '../config/db.config'
-import {createBadRequestResponse, createUserConflictResponse, ErrorData} from '../controllers/responseHelpers'
+import {
+    createBadRequestResponse,
+    createUserConflictResponse,
+    createWrongPasswordResponse,
+    ErrorData
+} from '../controllers/responseHelpers'
 import {SignUpData} from './types'
 
 const bcrypt = require('bcrypt')
+
+export type RequestWithParams = {
+    params: any
+}
 
 export interface UserAttributes {
     id: number
@@ -61,6 +70,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
 
         const newUser: User = await User.create(userCreationObject)
         return newUser
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public static async get(req: unknown): Promise<User | User[] | ErrorData> {
+        // TODO Complete the method
+        return createWrongPasswordResponse()
     }
 }
 

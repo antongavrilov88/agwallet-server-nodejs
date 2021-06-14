@@ -4,8 +4,8 @@ import {ErrorData} from './responseHelpers'
 
 export class LimitedAccessView {
     static authorizedUser: User | ErrorData
-    static async isLimitedAccessGranted(obj: unknown): Promise<User | ErrorData> {
-        this.authorizedUser = await Auth.getStatus(obj)
+    static async getAuthorizedUser(obj: unknown): Promise<User | ErrorData> {
+        this.authorizedUser = await Auth.getAuthorizedUserData(obj)
         return this.authorizedUser
     }
 }

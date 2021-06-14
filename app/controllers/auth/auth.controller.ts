@@ -13,23 +13,23 @@ import {Auth} from '../helpers'
 export class AuthAPI extends LimitedAccessView {
     signUp = async (req: unknown, res: any) => {
         try {
-            const newUserResponse: User | ErrorData = await User.add(req)
+            const newUser: User | ErrorData = await User.add(req)
 
-            if (isErrorResponse(newUserResponse)) {
-                throw new Error(JSON.stringify(newUserResponse))
+            if (isErrorResponse(newUser)) {
+                throw new Error(JSON.stringify(newUser))
             }
 
-            const newTokenResponse: Token | ErrorData = await Token.add(newUserResponse.id)
+            const newToken: Token | ErrorData = await Token.add(newUser.id)
 
-            if (isErrorResponse(newTokenResponse)) {
-                throw new Error(JSON.stringify(newTokenResponse))
+            if (isErrorResponse(newToken)) {
+                throw new Error(JSON.stringify(newToken))
             }
 
             const responseObject = {
                 type: 'auth',
-                id: newUserResponse.id,
+                id: newUser.id,
                 attributes: {
-                    token: newTokenResponse.token
+                    token: newToken.token
                 },
                 links: {
                     self: createURL(AuthRoutes.signUp)
@@ -46,24 +46,22 @@ export class AuthAPI extends LimitedAccessView {
     }
     signIn = async (req: unknown, res: any) => {
         try {
-            const userResponse: User | ErrorData = await Auth.getSigningInUserData(req)
+            const newUser: User | ErrorData = await Auth.getSigningInUserData(req)
 
-            if (isErrorResponse(userResponse)) {
-                throw new Error(JSON.stringify(userResponse))
+            if (isErrorResponse(newUser)) {
+                throw new Error(JSON.stringify(newUser))
             }
 
-            const userId: number = userResponse.id
+            const newToken: Token | ErrorData = await Token.add(newUser.id)
 
-            const newTokenResponse: Token | ErrorData = await Token.add(userId)
-
-            if (isErrorResponse(newTokenResponse)) {
-                throw new Error(JSON.stringify(newTokenResponse))
+            if (isErrorResponse(newToken)) {
+                throw new Error(JSON.stringify(newToken))
             }
 
             const responseObject = {
                 type: 'auth',
                 attributes: {
-                    token: newTokenResponse.token
+                    token: newToken.token
                 },
                 links: {
                     self: createURL(AuthRoutes.signIn)
@@ -80,15 +78,13 @@ export class AuthAPI extends LimitedAccessView {
     signOut = async (req: unknown, res: any) => {
         try {
             // eslint-disable-next-line max-len
-            const authorizedUserResponse: User | ErrorData = await AuthAPI.isLimitedAccessGranted(req)
+            const authorizedUser: User | ErrorData = await LimitedAccessView.getAuthorizedUser(req)
 
-            if (isErrorResponse(authorizedUserResponse)) {
-                throw new Error(JSON.stringify(authorizedUserResponse))
+            if (isErrorResponse(authorizedUser)) {
+                throw new Error(JSON.stringify(authorizedUser))
             }
 
-            const userId: number = authorizedUserResponse.id
-
-            const userSignedOut: number | ErrorData = await Token.remove(userId)
+            const userSignedOut: number | ErrorData = await Token.remove(authorizedUser.id)
 
             if (isErrorResponse(userSignedOut)) {
                 throw new Error(JSON.stringify(userSignedOut))
