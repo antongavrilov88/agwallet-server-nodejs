@@ -25,7 +25,6 @@ export class Token extends Model<TokenAttributes, TokenCreationAttributes>
     public readonly updatedAt!: Date
 
     public static async add(userId: number): Promise<Token | ErrorData> {
-        console.log(userId)
         const isUserAlreadyInSystem: number = await Token.count({
             where: {userId}
         })
