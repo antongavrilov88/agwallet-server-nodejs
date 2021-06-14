@@ -7,7 +7,7 @@
         ],
         "module": "esnext",
         "moduleResolution": "node",
-        "target": "es5",
+        "target": "es2017",
         "jsx": "react",
         "importHelpers": true,
         "noUnusedLocals": true,

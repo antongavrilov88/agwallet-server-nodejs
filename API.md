@@ -16,7 +16,13 @@ Any Server's response derives from the basic JSON object:
 {
     "jsonapi": {
         "version": "1.0"
-    }
+    },
+    "meta": {
+        "copyright": "Anton Gavrilov",
+        "authors": [
+            "Anton Gavrilov"
+        ],
+    },
 }
 ```
 and extends it with its own fields.
@@ -50,6 +56,7 @@ Content-Type: application/json
     <basic JSON fields>,
     "data": {
         "type": "auth",
+        "id": <userId>
         "attributes": {
             "token": "<authorization token>"
         },
@@ -102,7 +109,7 @@ Content-Type: application/json
 
 To log in an existing user Client must send the following request to Server:
 ```http
-POST /api/v1.0/auth/login HTTP/1.1
+POST /api/v1.0/auth/signin HTTP/1.1
 
 {
     "data": {
@@ -147,8 +154,8 @@ Content-Type: application/json
 {
     <basic JSON fields>,
     "errors": [{
-        "code": "UserDoesNotExist",
-        "title": "User does not exist"
+        "code": "UserNotFound",
+        "title": "User not found"
     }]
 }
 ```
@@ -162,7 +169,7 @@ Content-Type: application/json
     <basic JSON fields>,
     "errors": [{
         "code": "WrongPassword",
-        "title": "Password is wrong"
+        "title": "Wrong password"
     }]
 }
 ```
@@ -185,7 +192,7 @@ Content-Type: application/json
 
 To log out a user Client must send the following request to Server:
 ```
-POST /api/v1.0/auth/logout HTTP/1.1
+DELETE /api/v1.0/auth/logout HTTP/1.1
 Authorization: Bearer <authorization token>
 ```
 

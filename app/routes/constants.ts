@@ -1,5 +1,7 @@
 import {apiVersion} from '../controllers/config'
 
+export type Nullable<T> = T | null | string
+
 export const baseUrl = '/api/'
 
 export enum UserRoutes {
@@ -14,4 +16,4 @@ export enum AuthRoutes {
     signOut = '/auth/signout'
 }
 
-export const createURL = (api: string, entityId = '') => `${baseUrl + apiVersion + api + entityId}`
+export const createURL = (api: string, entityId: Nullable<number> = '') => `${baseUrl + apiVersion + api + entityId}`

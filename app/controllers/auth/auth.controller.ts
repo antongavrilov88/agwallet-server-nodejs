@@ -1,68 +1,28 @@
-import Validator from 'validatorjs'
-import {suid} from 'rand-token'
 import {AuthRoutes, createURL} from '../../routes/constants'
-import {
-    errors, createBadResponse, createSuccessResponse, checkEmail
-} from '../helpers'
-import {db} from '../../models/index'
-import {signInDataRules, signUpDataRules} from './requestDataRules'
+import {User} from '../../models/User.model'
 import {LimitedAccessView} from '../LimitedAccessView'
-import {isSignUpData} from './types'
-
-const bcrypt = require('bcrypt')
-
-const User = db.users
-const Token = db.tokens
+import {
+    createErrorResponse,
+    createSuccessResponse,
+    ErrorData,
+    isErrorResponse
+} from '../responseHelpers'
+import {Token} from '../../models/Token.model'
+import {Auth} from '../helpers'
 
 export class AuthAPI extends LimitedAccessView {
-    signUp = async (req: any, res: any) => {
+    signUp = async (req: unknown, res: any) => {
         try {
-            const validation = new Validator(req, signUpDataRules)
+            const newUser: User | ErrorData = await User.add(req)
 
-            if (validation.fails() || !isSignUpData(req)) {
-                res.status(400).send(
-                    createBadResponse(errors.WRONG_API)
-                )
-                return
+            if (isErrorResponse(newUser)) {
+                throw new Error(JSON.stringify(newUser))
             }
 
-            if (await checkEmail(req.body.data.attributes.email)) {
-                res.status(409).send(
-                    createBadResponse(errors.USER_CONFLICT)
-                )
-                return
-            }
+            const newToken: Token | ErrorData = await Token.add(newUser.id)
 
-            const hashPassword = bcrypt.hashSync(req.body.data.attributes.password, 10)
-
-            const users = await User.count()
-
-            const user = {
-                email: req.body.data.attributes.email,
-                password: hashPassword,
-                admin: users.length === 0
-            }
-
-            const newUser = await User.create(user)
-
-            if (!newUser) {
-                res.status(500).send(
-                    createBadResponse(errors.INTERNAL_ERROR)
-                )
-                return
-            }
-
-            const token = {
-                userId: newUser.id,
-                token: suid(16)
-            }
-            const newToken = await Token.create(token)
-
-            if (!newToken) {
-                res.status(500).send(
-                    createBadResponse(errors.INTERNAL_ERROR)
-                )
-                return
+            if (isErrorResponse(newToken)) {
+                throw new Error(JSON.stringify(newToken))
             }
 
             const responseObject = {
@@ -78,63 +38,24 @@ export class AuthAPI extends LimitedAccessView {
 
             res.status(201).send(createSuccessResponse(responseObject))
         } catch (err) {
-            res.status(500).send(
-                createBadResponse(errors.INTERNAL_ERROR)
+            const error = JSON.parse(err.message)
+            res.status(error.status).send(
+                createErrorResponse(error.message)
             )
         }
     }
-    signIn = async (req: any, res: any) => {
+    signIn = async (req: unknown, res: any) => {
         try {
-            const validation = new Validator(req, signInDataRules)
+            const newUser: User | ErrorData = await Auth.getSigningInUserData(req)
 
-            if (validation.fails()) {
-                res.status(400).send(
-                    createBadResponse(errors.WRONG_API)
-                )
-                return
+            if (isErrorResponse(newUser)) {
+                throw new Error(JSON.stringify(newUser))
             }
 
-            const user = await User.findOne({where: {email: req.body.data.attributes.email}})
-            if (!user) {
-                res.status(404).send(
-                    createBadResponse(errors.USER_NOT_FOUND)
-                )
-                return
-            }
+            const newToken: Token | ErrorData = await Token.add(newUser.id)
 
-            const status = await Token.findOne({where: {userId: user.id}})
-            if (status) {
-                res.status(409).send(
-                    createBadResponse(errors.AUTH_CONFLICT)
-                )
-                return
-            }
-
-            const userPassword = user.password
-
-            const passwordVerifyStatus = bcrypt.compareSync(
-                req.body.data.attributes.password,
-                userPassword
-            )
-
-            if (!passwordVerifyStatus) {
-                res.status(401).send(
-                    createBadResponse(errors.WRONG_PASSWORD)
-                )
-                return
-            }
-
-            const token = {
-                userId: user.id,
-                token: suid(16)
-            }
-
-            const newToken = await Token.create(token)
-            if (!newToken) {
-                res.status(500).send(
-                    createBadResponse(errors.INTERNAL_ERROR)
-                )
-                return
+            if (isErrorResponse(newToken)) {
+                throw new Error(JSON.stringify(newToken))
             }
 
             const responseObject = {
@@ -146,50 +67,33 @@ export class AuthAPI extends LimitedAccessView {
                     self: createURL(AuthRoutes.signIn)
                 }
             }
-
-            res.status(201).send(
-                createSuccessResponse(responseObject)
-            )
-        } catch {
-            res.status(500).send(
-                createBadResponse(errors.INTERNAL_ERROR)
+            res.status(200).send(createSuccessResponse(responseObject))
+        } catch (err) {
+            const error = JSON.parse(err.message)
+            res.status(error.status).send(
+                createErrorResponse(error.message)
             )
         }
     }
-    signOut = async (req: any, res: any) => {
+    signOut = async (req: unknown, res: any) => {
         try {
-            const status = await AuthAPI.limitAccess(req)
-            if (!status) {
-                res.status(401).send(
-                    createBadResponse(errors.TOKEN_NOT_PROVIDED)
-                )
-                return
+            // eslint-disable-next-line max-len
+            const authorizedUser: User | ErrorData = await LimitedAccessView.getAuthorizedUser(req)
+
+            if (isErrorResponse(authorizedUser)) {
+                throw new Error(JSON.stringify(authorizedUser))
             }
 
-            const token = req.headers.authorization.split(' ')
+            const userSignedOut: number | ErrorData = await Token.remove(authorizedUser.id)
 
-            const logout = await Token.destroy(
-                {where: {token: token[1]}}
-            )
-            if (!logout) {
-                res.status(500).send(
-                    createBadResponse(errors.INTERNAL_ERROR)
-                )
+            if (isErrorResponse(userSignedOut)) {
+                throw new Error(JSON.stringify(userSignedOut))
             }
-
-            const responseObject = {
-                type: 'auth',
-                links: {
-                    self: createURL(AuthRoutes.signOut)
-                }
-            }
-
-            res.status(200).send(
-                createSuccessResponse(responseObject)
-            )
-        } catch (error) {
-            res.status(500).send(
-                createBadResponse(errors.INTERNAL_ERROR)
+            res.status(200).send(createSuccessResponse(null))
+        } catch (err) {
+            const error = JSON.parse(err.message)
+            res.status(error.status).send(
+                createErrorResponse(error.message)
             )
         }
     }

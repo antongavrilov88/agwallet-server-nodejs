@@ -1,95 +1,103 @@
-import {db} from '../models/index'
-import {apiVersion} from './config'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import Validator from 'validatorjs'
+import {User} from '../models/User.model'
+import {Token} from '../models/Token.model'
 import {
-    DefaultObject, ErrorData, Error, ResponseData
-} from './types'
+    createBadRequestResponse,
+    createTokenNotProvidedResponse,
+    createUnauthorizedResponse,
+    createUserNotFoundResponse,
+    createWrongPasswordResponse,
+    ErrorData
+} from './responseHelpers'
+import {signInDataRules} from './auth/requestDataRules'
+import {SignInData} from './auth/types'
 
-const Token = db.tokens
-const User = db.users
+const bcrypt = require('bcrypt')
 
-export const makeErrorObject = (code: string, title: string) => ({
-    code,
-    title
-})
+type Nullable<T> = T | null
 
-export const errors: Record<any, Error> = {
-    WRONG_API: makeErrorObject('WrongAPI', 'Wrong API'),
-    AUTH_CONFLICT: makeErrorObject('UserAlreadyInSystem', 'User already in system'),
-    INTERNAL_ERROR: makeErrorObject('InternalError', 'Something went wrong'),
-    UNAUTHORIZED: makeErrorObject('Unauthorized', 'Unauthorized'),
-    NOT_FOUND: makeErrorObject('NotFound', 'Not found'),
-    FORBIDDEN: makeErrorObject('AccessDenied', 'Access denied'),
-    TOKEN_NOT_PROVIDED: makeErrorObject('TokenNotProvided', 'Token not provided'),
-    USER_NOT_FOUND: makeErrorObject('UserNotFound', 'User not found'),
-    USER_CONFLICT: makeErrorObject('UserAlreadyExists', 'User already exists'),
-    WRONG_PASSWORD: makeErrorObject('WrongPassword', 'Wrong password')
-}
-
-export const defaultResponseObject = () => ({
-    jsonapi: {
-        version: apiVersion
-    },
-    meta: {
-        copyright: 'Anton Gavrilov',
-        authors: [
-            'Anton Gavrilov'
-        ]
+type RequestObjectWithHeader = {
+    headers: {
+        authorization: string
     }
-})
-
-export const errorResponseObject = (error: Error) => {
-    const responseObject: DefaultObject<ErrorData> = defaultResponseObject()
-    responseObject.errors = [{
-        code: error.code,
-        title: error.title
-    }]
-    return responseObject
 }
 
-export const successResponseObject = (data: ResponseData) => {
-    const responseObject: DefaultObject<ResponseData> = defaultResponseObject()
-    responseObject.data = data
-    return responseObject
-}
-
-export const createSuccessResponse = (data: any) => successResponseObject(data)
-
-export const createBadResponse = (error: Error) => errorResponseObject(error)
-
-export const checkUserStatus = async (token: any) => {
-    const status = Token.findOne({where: {token}})
+export const checkUserStatus = async (token: string): Promise<Nullable<Token>> => {
+    const status: Nullable<Token> = await Token.findOne({where: {token}})
         .then((data: any) => (data !== null ? data.id : false))
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .catch((_err: {message: any}) => {
         })
-    return await status
-}
-
-export const checkEmail = async (email: any) => {
-    const count = await User.findOne({where: {email}})
-    return count !== null
+    return status
 }
 
 export class Auth {
-    static async status(header: string) {
-        let token: string | null = null
-        if (header) {
-            const authorization = header.split(' ')
-            if (authorization.length !== 2) {
-                return errors.TOKEN_NOT_PROVIDED
-            }
-            // eslint-disable-next-line prefer-destructuring
-            token = authorization[1]
-            const id = async () => {
-                const status = Token.findOne({where: {token}})
-                    .then((data: any) => (data !== null ? data.id : false))
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    .catch((_err: {message: any}) => {
-                    })
-                return await status
-            }
-            return await id()
+    static async getAuthorizedUserData(obj: unknown): Promise<User | ErrorData> {
+        const isHeaderProvided = (value: unknown): value is RequestObjectWithHeader => (
+            // TODO complete typeGuard
+            typeof value === 'object'
+                && value !== null
+                && 'headers' in value
+        )
+
+        if (!isHeaderProvided(obj)) {
+            return createTokenNotProvidedResponse()
         }
-        return false
+        const header = obj.headers.authorization
+        if (!header) {
+            return createBadRequestResponse()
+        }
+        const authorization = header.split(' ')
+        if (authorization.length !== 2) {
+            return createBadRequestResponse()
+        }
+        const [,token] = authorization
+        const currentToken: Nullable<Token> = await Token.findOne({where: {token}})
+
+        if (currentToken === null) {
+            return createUnauthorizedResponse()
+        }
+
+        const user: Nullable<User> = await User.findOne({where: {id: currentToken.userId}})
+
+        if (user === null) {
+            return createUserNotFoundResponse()
+        }
+
+        return user
     }
+
+    static async getSigningInUserData(req: unknown): Promise<User | ErrorData> {
+        const isSignInData = (obj: unknown): obj is SignInData => {
+            const validation = new Validator(obj, signInDataRules)
+            return !validation.fails()
+        }
+
+        if (!isSignInData(req)) {
+            return createBadRequestResponse()
+        }
+
+        const user: Nullable<User> = await User.findOne({
+            where: {email: req.body.data.attributes.email}
+        })
+
+        if (user === null) {
+            return createUserNotFoundResponse()
+        }
+        const isPasswordValid = bcrypt.compareSync(
+            req.body.data.attributes.password,
+            user.password
+        )
+
+        if (!isPasswordValid) {
+            return createWrongPasswordResponse()
+        }
+
+        return user
+    }
+}
+
+export const checkEmail = async (email: string): Promise<Boolean> => {
+    const count: Nullable<User> = await User.findOne({where: {email}})
+    return count !== null
 }

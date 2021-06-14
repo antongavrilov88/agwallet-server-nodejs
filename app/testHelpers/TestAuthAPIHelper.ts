@@ -3,7 +3,7 @@ import {TestAPIHelper} from './TestAPIHelper'
 
 export class TestAuthAPIHelper extends TestAPIHelper {
     static createUser = async (signUpData: any) => {
-        const newUser = TestAPIHelper.request.post(
+        const newUser = await TestAPIHelper.request.post(
             signUpData,
             createURL(AuthRoutes.signUp)
         )
