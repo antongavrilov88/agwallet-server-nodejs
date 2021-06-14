@@ -3,7 +3,8 @@
 // import {sequelize} from '../../config/db.config'
 // import {TestAuthAPIHelper} from '../../testHelpers/TestAuthAPIHelper'
 // import {
-//     signInUser, signInUserWrongPassword, signUpUser
+//     // signInUser, signInUserWrongPassword,
+//     signUpUser
 // } from '../../testHelpers/TestRequestObjects'
 // import {router} from '../../routes/index'
 
@@ -18,58 +19,59 @@
 // describe('Auth API tests', () => {
 //     it('Should return 201 response status and token to signup request with valid data', async (done) => {
 //         const newUser: any = await TestAuthAPIHelper.createUser(JSON.stringify(signUpUser))
+//         try {
+//             expect(newUser.status).toEqual(201)
+//             done()
+//         } catch (error) {
+//         }
+// expect(JSON.parse(newUser.text).data.type).toEqual('auth')
+// expect(JSON.parse(newUser.text).data.attributes.token).toBeDefined()
+// })
+// it('Should return 409 response status to signup request with existing email', async (done) => {
+//     await TestAuthAPIHelper.createUser(signUpUser)
 
-//         expect(newUser.status).toEqual(201)
-//         expect(JSON.parse(newUser.text).data.type).toEqual('auth')
-//         expect(JSON.parse(newUser.text).data.attributes.token).toBeDefined()
+//     const conflictUserResponse: any = await TestAuthAPIHelper.createUser(signUpUser)
 
-//         done()
-//     })
-//     it('Should return 409 response status to signup request with existing email', async (done) => {
-//         await TestAuthAPIHelper.createUser(signUpUser)
+//     expect(conflictUserResponse.status).toEqual(409)
 
-//         const conflictUserResponse: any = await TestAuthAPIHelper.createUser(signUpUser)
+//     done()
+// })
+// it('Should return 409 response status to signin request with user already in system', async (done) => {
+//     await TestAuthAPIHelper.createUser(signUpUser)
 
-//         expect(conflictUserResponse.status).toEqual(409)
+//     const conflictUserResponse: any = await TestAuthAPIHelper.signInUser(signInUser)
 
-//         done()
-//     })
-//     it('Should return 409 response status to signin request with user already in system', async (done) => {
-//         await TestAuthAPIHelper.createUser(signUpUser)
+//     expect(conflictUserResponse.status).toEqual(409)
 
-//         const conflictUserResponse: any = await TestAuthAPIHelper.signInUser(signInUser)
+//     done()
+// })
+// it('Should return 200 response status to signout request with user valid data', async (done) => {
+//     const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
+//     const {token} = JSON.parse(newUser.text).data.attributes
+//     const signOutResponse: any = await TestAuthAPIHelper.signOut(token)
 
-//         expect(conflictUserResponse.status).toEqual(409)
+//     expect(signOutResponse.status).toEqual(200)
 
-//         done()
-//     })
-//     it('Should return 200 response status to signout request with user valid data', async (done) => {
-//         const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
-//         const {token} = JSON.parse(newUser.text).data.attributes
-//         const signOutResponse: any = await TestAuthAPIHelper.signOut(token)
+//     done()
+// })
+// it('Should return 201 response status to signin request with valid data', async (done) => {
+//     const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
+//     const {token} = JSON.parse(newUser.text).data.attributes
+//     await TestAuthAPIHelper.signOut(token)
+//     const signInResponse = await TestAuthAPIHelper.signInUser(signInUser)
 
-//         expect(signOutResponse.status).toEqual(200)
+//     expect(signInResponse.status).toEqual(201)
 
-//         done()
-//     })
-//     it('Should return 201 response status to signin request with valid data', async (done) => {
-//         const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
-//         const {token} = JSON.parse(newUser.text).data.attributes
-//         await TestAuthAPIHelper.signOut(token)
-//         const signInResponse = await TestAuthAPIHelper.signInUser(signInUser)
+//     done()
+// })
+// it('Should return 401 response status to signin request with wrong password', async (done) => {
+//     const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
+//     const {token} = JSON.parse(newUser.text).data.attributes
+//     await TestAuthAPIHelper.signOut(token)
+//     const wrongSignInResponse = await TestAuthAPIHelper.signInUser(signInUserWrongPassword)
 
-//         expect(signInResponse.status).toEqual(201)
+//     expect(wrongSignInResponse.status).toEqual(401)
 
-//         done()
-//     })
-//     it('Should return 401 response status to signin request with wrong password', async (done) => {
-//         const newUser: any = await TestAuthAPIHelper.createUser(signUpUser)
-//         const {token} = JSON.parse(newUser.text).data.attributes
-//         await TestAuthAPIHelper.signOut(token)
-//         const wrongSignInResponse = await TestAuthAPIHelper.signInUser(signInUserWrongPassword)
-
-//         expect(wrongSignInResponse.status).toEqual(401)
-
-//         done()
-//     })
+//     done()
+// })
 // })

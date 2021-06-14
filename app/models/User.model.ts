@@ -9,11 +9,12 @@ import {signUpDataRules} from './requestDataRules'
 import {sequelize} from '../config/db.config'
 import {
     createBadRequestResponse,
+    createInternalErrorResponse,
     createUserConflictResponse,
-    createWrongPasswordResponse,
+    createUserNotFoundResponse,
     ErrorData
 } from '../controllers/responseHelpers'
-import {SignUpData} from './types'
+import {SignUpData} from '../controllers/auth/types'
 
 const bcrypt = require('bcrypt')
 
@@ -21,6 +22,9 @@ export type RequestWithParams = {
     params: any
 }
 
+export type Iterable<T> = T | T[]
+
+export type Nullable<T> = T | null
 export interface UserAttributes {
     id: number
     email: string
@@ -41,40 +45,55 @@ export class User extends Model<UserAttributes, UserCreationAttributes>
     public readonly updatedAt!: Date
 
     public static async add(req: unknown): Promise<User | ErrorData> {
-        const isSignUpData = (obj: unknown): obj is SignUpData => {
-            const validation = new Validator(obj, signUpDataRules)
-            return !validation.fails()
+        try {
+            const isSignUpData = (obj: unknown): obj is SignUpData => {
+                const validation = new Validator(obj, signUpDataRules)
+                return !validation.fails()
+            }
+
+            if (!isSignUpData(req)) {
+                return createBadRequestResponse()
+            }
+
+            const isUserAlredyExsists: number = await User.count({
+                where: {email: req.body.data.attributes.email}
+            })
+
+            if (isUserAlredyExsists !== 0) {
+                return createUserConflictResponse()
+            }
+
+            const countUsers: number = await User.count()
+
+            const hashPassword: string = bcrypt.hashSync(req.body.data.attributes.password, 10)
+
+            const userCreationObject: UserCreationAttributes = {
+                email: req.body.data.attributes.email,
+                password: hashPassword,
+                admin: countUsers === 0
+            }
+
+            const newUser: User = await User.create(userCreationObject)
+            return newUser
+        } catch (error) {
+            return createInternalErrorResponse()
         }
-
-        if (!isSignUpData(req)) {
-            return createBadRequestResponse()
-        }
-
-        const isUserAlredyExsists: number = await User.count({
-            where: {email: req.body.data.attributes.email}
-        })
-
-        if (isUserAlredyExsists !== 0) {
-            return createUserConflictResponse()
-        }
-
-        const countUsers: number = await User.count()
-
-        const hashPassword: string = bcrypt.hashSync(req.body.data.attributes.password, 10)
-
-        const userCreationObject: UserCreationAttributes = {
-            email: req.body.data.attributes.email,
-            password: hashPassword,
-            admin: countUsers === 0
-        }
-
-        const newUser: User = await User.create(userCreationObject)
-        return newUser
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static async get(req: unknown): Promise<User | User[] | ErrorData> {
-        // TODO Complete the method
-        return createWrongPasswordResponse()
+    public static async get(
+        id: Nullable<number> = null
+    ): Promise<Iterable<User> | ErrorData> {
+        if (id === null) {
+            const users: Iterable<User> = await User.findAll()
+            return users
+        }
+        const user: Iterable<User> | null = await User.findOne({where: {id}})
+
+        if (user === null) {
+            return createUserNotFoundResponse()
+        }
+
+        return user
     }
 }
 

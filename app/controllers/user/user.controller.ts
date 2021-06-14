@@ -2,11 +2,13 @@ import {createURL, UserRoutes} from '../../routes/constants'
 import {
     ErrorData,
     isErrorResponse,
-    createErrorResponse
+    createErrorResponse,
+    createSuccessResponse
 } from '../responseHelpers'
 import {LimitedAccessView} from '../LimitedAccessView'
 import {User} from '../../models/User.model'
 
+type Iterable<T> = T | T[]
 export class UserAPI extends LimitedAccessView {
     static getData = (user: User, minimal = null) => {
         const responseObject: any = {}
@@ -24,7 +26,7 @@ export class UserAPI extends LimitedAccessView {
         return responseObject
     }
 
-    get = async (req: unknown, res: any) => {
+    public static get = async (req: any, res: any) => {
         try {
             const authorizedUser: User | ErrorData = await LimitedAccessView.getAuthorizedUser(req)
 
@@ -32,27 +34,18 @@ export class UserAPI extends LimitedAccessView {
                 throw new Error(JSON.stringify(authorizedUser))
             }
 
-            // const users: User | User[] | ErrorData = await User.get(req)
-            // const {id} = req.params
+            const {id} = req.params
+            const users: Iterable<User> | ErrorData = await User.get(id)
 
-            // if (!id) {
-            //     const users = await User.findAll()
+            if (isErrorResponse(users)) {
+                throw new Error(JSON.stringify(users))
+            }
 
-            //     res.status(200).send(createSuccessResponse(
-            //         users.map((user: any) => UserAPI.getData(user))
-            //     ))
-            // } else {
-            //     const user = await User.findOne({where: {id}})
-            //     if (user === null) {
-            //         res.status(404).send(
-            //             createBadResponse(errors.USER_NOT_FOUND)
-            //         )
-            //         return
-            //     }
-            //     res.status(200).send(
-            //         createSuccessResponse(UserAPI.getData(user))
-            //     )
-            // }
+            res.status(200).send(createSuccessResponse(
+                Array.isArray(users)
+                    ? users.map((user: User) => UserAPI.getData(user))
+                    : UserAPI.getData(users)
+            ))
         } catch (err) {
             const error = JSON.parse(err.message)
             res.status(error.status).send(
