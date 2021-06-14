@@ -26,7 +26,7 @@ export class UserAPI extends LimitedAccessView {
         return responseObject
     }
 
-    public static get = async (req: any, res: any) => {
+    get = async (req: any, res: any) => {
         try {
             const authorizedUser: User | ErrorData = await LimitedAccessView.getAuthorizedUser(req)
 

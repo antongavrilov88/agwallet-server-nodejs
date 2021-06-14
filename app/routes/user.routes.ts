@@ -6,11 +6,11 @@ export const userRoutes = (app: any) => {
     // eslint-disable-next-line global-require
     const router = require('express').Router()
 
-    // const userAPI = new UserAPI()
+    const userAPI = new UserAPI()
 
-    router.get(UserRoutes.root, UserAPI.get)
+    router.get(UserRoutes.root, userAPI.get)
 
-    router.get(UserRoutes.userId, UserAPI.get)
+    router.get(UserRoutes.userId, userAPI.get)
 
     app.use(baseUrl + apiVersion, router)
 }
